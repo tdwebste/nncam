@@ -1,0 +1,1877 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>NnCam API 手册</title>
+</head>
+<body>
+<h1 align="center">NnCam API 手册</h1>
+<p>&nbsp;</p>
+<hr/>
+<h1><font color="#0000FF">1. 版本和平台</font></h1>
+<hr/>
+<ul><li>版本:37.14643.2019.0511</li></ul>
+<ul>
+  <li>平台
+    <ul>
+      <li>Win32:
+        <ul>
+          <li>x86: XP SP3及以上版本; CPU至少需要支持SSE2指令集</li>
+          <li>x64: Win7及以上版本</li>
+		  <li>arm: Win10及以上版本</li>
+		  <li>arm64: Win10及以上版本</li>
+        </ul>
+      </li>
+	  <li>WinRT: x86, x64, arm, arm64；Windows 10或以上版本</li>
+      <li>macOS: universal (x64 + x86)；macOS 10.10或以上版本</li>
+      <li>Linux: 内核2.6.27及以上
+		<ul>
+			<li>x86: CPU至少需要支持SSE3指令集；GLIBC 2.8及以上.</li>
+			<li>x64: GLIBC 2.14及以上.</li>
+			<li>armel: GLIBC 2.17及以上；由toolchain arm-linux-gnueabi(版本4.9.2)编译</li>
+			<li>armhf: GLIBC 2.17及以上；由toolchain arm-linux-gnueabihf(版本4.9.2)编译</li>
+			<li>arm64: GLIBC 2.17及以上；由toolchain aarch64-linux-gnu(版本4.9.2)编译</li>
+		</ul>
+	  </li>
+      <li>Android: arm, arm64, x86, x64; built by android-ndk-r18b; __ANDROID_API__ = 23</li>
+    </ul>
+  </li>
+</ul>
+<hr/>
+<h1><font color="#0000FF">2. 简介</font></h1><hr/>
+<p align="left">NnCam系列相机支持多种API，包括：Native C/C++，<a href="#dotnet">.NET/C#/VB.NET</a>, <a href="#python">Python</a>, <a href="#java">Java</a>, <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd375454(v=vs.85).aspx">DirectShow</a>, <a href="http://twain.org/">Twain</a>, LabView, MatLab等等. Native C/C++ API作为底层(Low Level) API相比较其他API的特点是使用纯C/C++开发，不依赖其他的运行时库，接口简洁，控制灵活. 本SDK压缩包包含了所有需要用到的的资源和信息, 目录如下:</p>
+<ul><li>inc</li></ul>
+<blockquote>
+  <p>nncam.h, C/C++ 头文件<br/></p>
+</blockquote>
+<ul>
+  <li>win: Microsoft Windows平台文件
+    <ul>
+      <li>dotnet
+        <blockquote>
+          <p align="left">nncam.cs, 支持C#. nncam.cs使用P/Invoke调用至nncam.dll. 请把nncam.cs 拷贝到你的C#工程中使用.<br/>
+    nncam.vb, 支持VB.NET. nncam.vb使用P/Invoke调用至nncam.dll. 请把nncam.vb 拷贝到你的VB.NET工程中使用.<br/>
+       </p></blockquote>
+      </li>
+      <li>x86
+        <blockquote>
+          <p align="left">nncam.lib, x86 lib文件<br/>
+            nncam.dll, x86 动态库文件<br/>
+            democpp.exe, x86 C++ demo执行程序</p>
+        </blockquote>
+      </li>
+    <li>x64
+      <blockquote>
+        <p align="left">nncam.lib, x64 lib文件<br/>
+          nncam.dll, x64 动态库文件<br/>
+          democpp.exe, x64 C++ demo 执行程序</p>
+      </blockquote>
+    </li>
+    <li>arm
+      <blockquote>
+        <p align="left">nncam.lib, arm lib文件<br/>
+          nncam.dll, arm 动态库文件<br/></p>
+      </blockquote>
+    </li>
+    <li>arm64
+      <blockquote>
+        <p align="left">nncam.lib, arm64 lib文件<br/>
+          nncam.dll, arm64 动态库文件<br/></p>
+      </blockquote>
+    </li>
+	<li>winrt
+		<blockquote>
+		适用于WinRT / UWP (Universal Windows Platform) / Windows Store App的动态库文件.<br/>
+		它们和Windows Runtime兼容，可以被Universal Windows Platform app引用.<br/>
+		如果使用C#开发UWP，可以使用nncam.cs包装类.<br/>
+		请注意uwp的DeviceCapability，参阅<a href="https://msdn.microsoft.com/en-us/library/windows/hardware/dn303351(v=vs.85).aspx">How to add USB device capabilities to the app manifest</a>.(微软似乎限制了DeviceCapability下的Device条目不超过100)<br/>
+		demouwp.zip是一个uwp简单例子，编译运行例子之前请修改文件Package.appxmanifest中的DeviceCapability下的vid和pid.<br/>
+		</blockquote>
+	</li>
+    <li>drivers (<b>2017.1.1之后生产的相机支持WinUSB，在Windows8及以上版本上不再需要安装驱动</b>)
+      <blockquote>
+        <p align="left">x86 文件夹包含x86的内核态驱动文件,包括nncam.cat,  nncam.inf 和 nncam.sys<br/>
+          x64 文件夹包含x64的内核态驱动文件,包括nncam.cat, nncam.inf 和 nncam.sys</p>
+      </blockquote>
+    </li>
+    <li>samples
+      <ol>
+        <li>democpp, C++例子.本例子演示了枚举设备，打开设备，预览视频，抓拍图像，设置分辨率，触发，多种图片格式(.bmp, .jpg, .png等)保存图像到文件，wmv格式录像，触发模式，IO控制等等.这个例子使用了Pull Mode机制. 为了保持代码整洁, 例子使用的WTL库可以从这个链接下载<a href="http://sourceforge.net/projects/wtl/">http://sourceforge.net/projects/wtl/</a> </li>
+        <li>demopush, C++例子，使用Push Mode机制, StartPushModeV3.</li>
+		<li>demomfc, 一个简单C++例子，使用MFC作为GUI库，支持打开设备，预览视频，抓拍图像, 设置分辨率, 多种图片格式(.bmp, .jpg, .png等)保存图像到文件,等等.这个例子使用了Pull Mode机制.</li>
+		<li>demomono, 一个简单C++例子，演示黑白相机的8和16bits.</li>
+        <li>demowinformcs1, C# winform例子，支持打开设备，预览视频，抓拍图像，保存图片到文件，设置白平衡. 这个例子使用了Pull Mode机制, StartPullModeWithWndMsg.</li>
+        <li>demowinformcs2, C# winform例子，支持打开设备，预览视频，抓拍图像，保存图片到文件，设置白平衡. 这个例子使用了Pull Mode机制, StartPullModeWithCallback.</li>
+        <li>demowinformcs3, C# winform例子，支持打开设备，预览视频，抓拍图像，保存图片到文件，设置白平衡. 这个例子使用了Push Mode机制, StartPushModeV3.</li>
+        <li>demowinformvb, VB.NET winform例子，支持打开设备，预览视频，抓拍图像，保存图片到文件，设置白平衡. 这个例子使用了Pull Mode机制.</li>
+      </ol>
+    </li>
+    </ul>
+  </li>
+</ul>
+ <ul><li>linux: Linux平台文件
+ 	<ul>
+ 	<li>udev: 99-nncam.rules, udev rule文件. 请参考: <a href="http://reactivated.net/writing_udev_rules.html">http://reactivated.net/writing_udev_rules.html</a></li>
+     <li>c#: nncam.cs, for .Net Core C#. nncam.cs使用P/Invoke调用至libnncam.so. 请把nncam.cs 拷贝到你的C#工程中使用.</li>
+     <li>x86: libnncam.so, x86版本so文件</li>
+     <li>x64: libnncam.so, x64版本so文件</li>
+	 <li>armel: libnncam.so, armel版本so文件, toolchain为arm-linux-gnueabi</li>
+	 <li>armhf: libnncam.so, armhf版本so文件, toolchain为arm-linux-gnueabihf</li>
+	 <li>arm64: libnncam.so, arm64版本so文件, toolchain为aarch64-linux-gnu</li>
+	</ul>
+ 	</li></ul>
+<ul><li>android: Android平台arm, arm64, x86, x64四种架构的libnncam.so</li></ul>
+<ul><li>mac: macOS平台文件</li></ul>
+<ul><li>python: nncam.py和例子代码(控制台和pyQt)</li></ul>
+<ul><li>java: nncam.java和例子代码(控制台和Swing)</li></ul>
+<ul><li>doc: SDK使用文档,简体中文,英文</li></ul>
+<ul><li>sample
+	<ul>
+		<li>demosimplest, 最简单的例子,大约60行代码</li>
+		<li>demoraw, RAW数据和静态抓拍,大约120行代码</li>
+	</ul>
+	</li></ul>
+<ul>
+    <li>extras
+      <ul>
+        <li>directshow: DirectShow SDK和demo程序</li>
+        <li>twain: TWAIN SDK</li>
+        <li>labview: Labview SDK和demo程序</li>
+		<li>matlab: MatLab demo程序</li>
+      </ul>
+    </li></ul>
+<hr/>
+<h1><font color="#0000FF">3. 概念和术语</font></h1>
+<hr/>
+<h2><font color="#0000FF">a. 获取图像数据的模式: “Pull Mode” vs “Push Mode” (“拉”模式 vs “推”模式)</font></h2>
+<p>Nncam提供了两种模式来获取图像数据: Pull Mode 和 Push Mode. 以下所讲的几种方式中，从功能上说它们都是<strong>平等</strong>的，开发者可以任选一种使用. 推荐使用拉模式，因为它更简单,且在多线程情况下更加不容易出错, 尤其是使用windows消息机制的情况下.</p>
+<ul>
+  <li>Pull Mode, nncam 扮演被动角色，应用程序从nncam“拉”图像数据. nncam内部线程从相机获得图像数据,并保存到内部缓存中, 然后通知应用程序来取图像数据. 应用程序可以调用Nncam_PullImage(WithRowPitch)(V2)和Nncam_PullStillImage(WithRowPitch)(V2)来获取图像数据. 存在两种方式来通知应用程序:
+    <blockquote>a) 使用Windows消息机制: 通过调用函数 Nncam_StartPullModeWithWndMsg启动Pull mode模式. 当事件发生时, nncam会主动发送消息(PostMessage)到指定窗口. 参数WPARAM 是事件类型, 请参考NNCAM_EVENT_xxxx的定义. 参数LPARAM保留未使用. 本模式规避了多线程问题，是最简单的方式.(显然，这种方式只支持Windows系统，不支持Linux和macOS.)</blockquote>
+    <blockquote>b) 使用回调函数使用 Nncam_StartPullModeWithCallback启动Pull mode模式. 当事件发生时, 会调用PNNCAM_EVENT_CALLBACK回调函数.</blockquote>
+  </li>
+</ul>
+<blockquote>
+  <p>在Pull Mode 情况下, nncam不但可以通知应用程序图像数据或者静态图片到达，还可以通知其他事件类型，如下所示:</p>
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td width="28%" valign="top">NNCAM_EVENT_EXPOSURE</td>
+        <td width="72%" valign="top">曝光时间发生改变</td>
+      </tr>
+      <tr>
+        <td>NNCAM_EVENT_TEMPTINT</td>
+        <td>白平衡参数发生改变,Temp/Tint模式, 请参阅<a href="#wb">这里</a>.</td>
+      </tr>
+      <tr>
+        <td valign="top">NNCAM_EVENT_WBGAIN</td>
+        <td valign="top">白平衡参数发生改变,RGB Gain模式, 请参阅<a href="#wb">这里</a>.</td>
+      </tr>
+      <tr>
+        <td>NNCAM_EVENT_IMAGE</td>
+        <td>视频图像数据到达(视频).使用Nncam_PullImage(V2)“拉”图像数据</td>
+      </tr>
+      <tr>
+        <td>NNCAM_EVENT_STILLIMAGE</td>
+        <td>静态图片数据到达(Nncam_Snap或Nncam_SnapN引发).使用Nncam_PullStillImage(V2)“拉”图像数据</td>
+      </tr>
+      <tr>
+        <td>NNCAM_EVENT_ERROR</td>
+        <td>一般性错误，数据采集不能继续</td>
+      </tr>
+      <tr>
+        <td>NNCAM_EVENT_DISCONNECTED</td>
+        <td>相机断开连接，如被拔出</td>
+      </tr>
+      <tr>
+        <td>NNCAM_EVENT_TIMEOUT</td>
+        <td>抓取视频帧超时错误，数据采集不能继续</td>
+      </tr>
+  <tr>
+   <td>NNCAM_EVENT_TRIGGERFAIL</td>
+   <td>触发失败(如帧数据错误或超时)</td>
+ </tr>
+  <tr>
+   <td>NNCAM_EVENT_BLACK</td>
+   <td>黑平衡参数发生改变</td>
+ </tr>
+  <tr>
+   <td>NNCAM_EVENT_FFC</td>
+   <td>平场校正(flat field correction)状态发生改变</td>
+ </tr>
+  <tr>
+   <td>NNCAM_EVENT_DFC</td>
+   <td>暗场校正(dark field correction)状态发生改变</td>
+ </tr>
+  <tr>
+   <td>NNCAM_EVENT_FACTORY</td>
+   <td>恢复出厂设置</td>
+ </tr>
+    </table>
+  </div>
+</blockquote>
+<ul>
+  <li>Push Mode情况下, nncam作为主动方，一旦内部底层线程从camera中抓取到图像数据，就通过PNNCAM_DATA_CALLBACK_V3把图像数据“推”给应用程序 (请注意这个回调函数是在nncam内部线程上下文中执行的). 调用Nncam_StartPushMode函数进入推模式.推模式比较复杂，有一些特别注意事项（如多线程问题，也不能在PNNCAM_DATA_CALLBACK_V3回调函数里面调用Nncam_Close和Nncam_Stop等等）.</li>
+</ul>
+<h2><font color="#0000FF">b. <a id="stillcapture">静态抓拍(静态图片, Still Image, Snap)</a></font></h2>
+<p>大部分的相机型号都支持所谓静态抓拍的能力，指相机在连续的视频预览过程中，临时切换到另外一个分辨率，抓取一帧静态图片之后，马上把分辨率切换回原始分辨率的过程.</p>
+<p>举例来说，UCMOS05100KPA支持3种分辨率，假设当前视频预览分辨率为1280 * 960, 调用函数Nncam_Snap(h, 0)静态抓拍分辨率2592 * 1944的静态图片，这时相机临时切换到2592 * 1944的分辨率，抓取一帧数据之后，又把分辨率切换成原来的1280 * 960.</p>
+<blockquote>a) 拉模式下，抓拍到静态图片之后，通知外层应用NNCAM_EVENT_STILLIMAGE事件, 然后外层应用调用Nncam_PullStillImage(V2)获取静态图片的数据.</blockquote>
+<blockquote>b) 推模式下，抓拍到静态图片之后，回调函数PNNCAM_DATA_CALLBACK_V3, 参数bSnap设置为TRUE，图片的分辨率等信息在参数pHeader中.</blockquote>
+<p>可以通过函数Nncam_get_StillResolutionNumber的返回值或者结构NncamModelV2的still值来查看是否支持静态抓拍能力.</p>
+<h2><font color="#0000FF"><a id="raw">c. 数据格式: RGB vs RAW</a></font></h2>
+<p>Nncam支持两种数据格式: RGB格式(默认)和RAW格式. RAW模式可以通过调用函数Nncam_put_Option设置参数NNCAM_OPTION_RAW为1开启.</p>
+<ul><li>RGB格式: 本模式下，获取底层传感器的数据之后，进行内部的颜色处理，输出结果中每像素包含3个分量分别代表R/G/B值.</li></ul>
+<ul><li>RAW格式: 本模式下, 直接获取底层传感器的“裸”数据，不进行内部颜色处理. 具体的像素格式(Pixel Format)可以调用函数Nncam_get_RawFormat获取. RAW格式模式下, 有关颜色处理的功能(如白平衡)和函数（如Nncam_put_Hue,Nncam_AwbOnePush等等）都无意义.</li></ul>
+<p>用户可以通过NNCAM_OPTION_RAW调用函数Nncam_put_Option来切换这两种模式.请注意切换模式必须在调用相机开启函数(Nncam_StartPullModeWithWndMsg或Nncam_StartPullModeWithCallback或Nncam_StartPushModeV3)之前.</p>
+<h2><font color="#0000FF"><a id="wb">d. 白平衡和自动白平衡: Temp/Tint模式 vs RGB Gain模式</a></font></h2>
+<p>1. Nncam支持互相独立的两种模式描述白平衡: a) Temp/Tint模式; b) RGB Gain模式</p>
+<blockquote>
+<p>a) 默认是Temp/Tint模式，在本模式下，使用Temp, Tint这2个参数来控制白平衡. Nncam_get_TempTint获取值，Nncam_put_TempTint设置值. Nncam_AwbOnePush执行自动白平衡. 当白平衡参数改变时，发送NNCAM_EVENT_TEMPTINT通知消息.</p>
+<p>b) 在RGB Gain模式下，使用3个通道的Gain值来控制白平衡. Nncam_get_WhiteBalanceGain获取值，Nncam_put_WhiteBalanceGain设置值. Nncam_AwbInit执行自动白平衡. 当白平衡参数改变时，发送NNCAM_EVENT_WBGAIN通知消息.</p>
+<p>两种模式下使用的函数不能混淆:</p>
+	<blockquote>
+	a) Temp/Tint模式下，必须使用Nncam_get_TempTint和Nncam_put_TempTint和Nncam_AwbOnePush. 而Nncam_get_WhiteBalanceGain和Nncam_put_WhiteBalanceGain和Nncam_AwbInit不能使用，永远返回E_NOTIMPL.<br/>
+	b) RGB Gain模式下，必须使用Nncam_get_WhiteBalanceGain和Nncam_put_WhiteBalanceGain和Nncam_AwbInit. 而Nncam_get_TempTint和Nncam_put_TempTint和Nncam_AwbOnePush不能使用，永远返回E_NOTIMPL<br/>
+	</blockquote>
+<p>Nncam_Open的id参数之前加'@'字符表示使用RGB Gain模式的白平衡.如果想使用RGB Gain模式白平衡，假设id参数是"abcdef"，则传入参数"@abcdef".</p>
+</blockquote>
+<p>2. 自动白平衡功能, 业界有两种模式, 一种是连续自动白平衡,一种是触发式自动白平衡(one push). 连续自动白平衡功能会一直进行白平衡参数的计算, 触发模式只是在触发的时候才会计算白平衡参数. Nncam使用触发式白平衡计算方法，因为这种方法在显微镜等领域更加合适和精确. 连续自动白平衡在某些场景情况下会出现错误.</p>
+<p>3. 黑白相机不支持白平衡. 以上提到的函数一直返回E_NOTIMPL.</p>
+<h2><font color="#0000FF">e. <a id="trigger">触发模式</a></font></h2>
+<p>1. 什么是触发</p>
+	<blockquote>
+		NnCam相机拥有2中工作模式: 视频模式和触发模式. 当处于触发模式时，只有触发条件满足的情况下才能获取图像. 根据触发源有2种类型的触发类型: 外部触发，软件触发.
+	</blockquote>
+<p>2. 触发和Snap（静态图像抓拍）的区别</p>
+	<blockquote>
+		触发模式被设计用来精确控制相机当且仅当触发条件满足时才能获取图像.用户可以通过控制预设的触发条件获取图像.当进入触发模式时，直到触发条件被满足才能得到图像.图像的分辨率没有改变. Snap(静态图像抓拍)是用来在视频模式下抓取相同或者不同分辨率的图像.
+	</blockquote>
+<p>3. 软件触发</p>
+	<blockquote>
+		相机可以被软件触发. 在软件触发模式下，通过软件来控制触发条件. 图像的张数也可以软件控制.
+	</blockquote>
+<p>4. 外部触发</p>
+	<blockquote>
+		相机可以被外部信号触发. 当前仅支持上升沿触发模式.
+	</blockquote>
+<p>5. 模拟触发</p>
+	<blockquote>
+		对于既不支持软件触发又不支持外部触发的相机，可以使用模拟触发.当处于模拟触发模式时，相机硬件的工作模式和视频模式下的工作模式没有区别，但是上层软件不发起抓取动作，软件内部的缓冲区保持为空，直到用户设置触发条件. 
+	</blockquote>
+<p>6. 怎样进入触发模式</p>
+	<blockquote>
+		枚举相机时，可以得到相机型号的能力标志位，查看相机对于触发模式的支持能力，定义如下:
+			<blockquote><table width="100%" border="0" bgcolor="#B0D0B0"><tr><td><pre>#define NNCAM_FLAG_TRIGGER_SOFTWARE   0x00080000  /* 支持软触发 */
+#define NNCAM_FLAG_TRIGGER_EXTERNAL   0x00100000  /* 支持外部触发 */
+#define NNCAM_FLAG_TRIGGER_SINGLE     0x00200000  /* 仅支持单张触发: 一次触发得到一张图像 */</pre></td></tr></table></blockquote>
+		可以使用函数Nncam_put_Option(HNnCam h, unsigned iOption, int iValue)设置相机的触发模式，其中iOption参数为NNCAM_OPTION_TRIGGER，iValue用于设置触发模式的类型.请参阅以下内容:
+			<blockquote>
+<table width="100%" border="0" bgcolor="#B0D0B0"><tr><td><pre>#define NNCAM_OPTION_TRIGGER   0x0b    /* 0 = 视频模式, 1 = 软件或模拟触发模式, 2 = 外部触发模式, 默认值 =  0 */</pre></td></tr></table>
+			</blockquote>
+		函数Nncam_get_Option(HNnCam h, unsigned iOption, int* piValue)可以用来获取当前相机的触发模式类型.
+	</blockquote>
+<p>7. 怎样触发相机</p>
+	<blockquote>
+		使用函数Nncam_Trigger(HNnCam h, unsigned short nNumber). 不同的nNumber的含义:
+			<blockquote>
+			nNumber = 0 取消触发.<br/>
+			nNumber = 0xFFFF 一直触发, 类似于视频模式;<br/>
+			nNumber = 其他合法值代表单次触发获取的图片张数.<br/>
+			</blockquote>
+		如果NNCAM_FLAG_TRIGGER_SINGLE标志位是设置的，那么nNumber参数只能为1，意味着单次触发只能获取单张图片.<br/>
+		在调用Nncam_Trigger函数之前，相机必须已经处于触发模式.
+	</blockquote>
+<p>8. 触发超时</p>
+	<blockquote>
+	超时时间建议不少于(曝光时间 * 102% + 4秒).
+	</blockquote>
+<hr/>
+<h1><font color="#0000FF">4. 函数</font></h1>
+<hr/>
+<ul><li><h2><font color="#0000FF">HRESULT返回值</font></h2>
+	<p>HRESULT在Windows平台上的使用很普遍. macOS, Linux和Android平台上借用之，定义如下:</p>
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td width="20%">名称</td>
+        <td width="60%">说明</td>
+		<td width="20%">值</td>
+      </tr>
+	  <tr>
+        <td>S_OK</td>
+        <td>Operation successful (成功)</td>
+		<td>0x00000000</td>
+	  </tr>
+	  <tr>
+        <td>S_FALSE</td>
+        <td>Operation successful (成功)</td>
+		<td>0x00000001</td>
+	  </tr>
+	  <tr>
+        <td>E_FAIL</td>
+        <td>Unspecified failure (未指定的错误)</td>
+		<td>0x80004005</td>
+	  </tr>
+	  <tr>
+        <td>E_ACCESSDENIED</td>
+        <td>General access denied error (拒绝访问)</td>
+		<td>0x80070005</td>
+	  </tr>
+	  <tr>
+        <td>E_INVALIDARG</td>
+        <td>One or more arguments are not valid (参数错误)</td>
+		<td>0x80070057</td>
+	  </tr>
+	  <tr>
+        <td>E_NOTIMPL</td>
+        <td>Not supported or not implemented (功能不支持或未实现)</td>
+		<td>0x80004001</td>
+	  </tr>
+	  <tr>
+        <td>E_POINTER</td>
+        <td>Pointer that is not valid (无效指针)</td>
+		<td>0x80004003</td>
+	  </tr>
+	  <tr>
+        <td>E_UNEXPECTED</td>
+        <td>Unexpected failure (灾难性故障)</td>
+		<td>0x8000FFFF</td>
+	  </tr>
+	  <tr>
+        <td>E_WRONG_THREAD</td>
+        <td>Wrong thread (函数在错误的线程上下文中被调用)</td>
+		<td>0x8001010E</td>
+	  </tr>
+    </table>
+  </div><br/>
+<div align="center"><table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+  <tr><td><pre>#define SUCCEEDED(hr)   (((HRESULT)(hr)) &gt;= 0)
+#define FAILED(hr)      (((HRESULT)(hr)) &lt; 0)</pre></td></tr>
+</table></div>
+</li></ul>
+<ul><li><h2><font color="#0000FF">调用规范(Calling Convention)</font></h2>
+	<p>在Win平台使用__stdcall，请参阅<a href="https://docs.microsoft.com/en-us/cpp/cpp/stdcall">这里</a></p>
+	<p>在macOS, Linux和Android使用__cdecl</p>
+</li></ul>
+<ul><li><h2><a id="callback"><font color="#0000FF">回调函数: PNNCAM_EVENT_CALLBACK和PNNCAM_DATA_CALLBACK_V3</font></a></h2>
+	<p>这些回调函数是从nncam.dll的内部线程上下文中回调出来，所以，非常有必要关注多线程问题. 请尽量保持回调函数代码的简洁，并且快速返回.<br/>
+	  <strong>回调函数上下文有以下限制:<br/>
+	  (a)不要在回调函数上下文调用Nncam_Stop或Nncam_Close函数，否则，会死锁.<br/>
+	  (b)不要在回调函数上下文调用Nncam_put_Option设置NNCAM_OPTION_TRIGGER, NNCAM_OPTION_BITDEPTH, NNCAM_OPTION_PIXEL_FORMAT, NNCAM_OPTION_BINNING, NNCAM_OPTION_ROTATE，否则返回E_WRONG_THREAD.</strong>
+</p></li></ul>
+<ul><li><h2><a id="cord"><font color="#0000FF">坐标</font></a></h2>
+<p>类似Nncam_put_Roi, Nncam_put_AEAuxRect等等这类带有坐标参数的，其坐标<strong>永远是相对原始分辨率而言</strong>的，即使视频已经执行过旋转，Flip，ROI，数字Binning或它们的任意组合.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_EnumV2</font></h2>
+  <p><strong>返回值：</strong>非负整数，枚举到的相机数目</p>
+  <p><strong>参数：</strong>NncamInstV2缓冲区</p>
+  <p><strong>说明：</strong>调用该函数枚举计算机上当前插上的Nncam相机.函数返回时，NncamInstV2缓冲区包含有枚举到的每个相机实例的信息.<strong>如果不关心多个相机同时联入电脑的情况的话，调用本函数枚举相机实例是可选的.</strong></p>
+  <blockquote>
+    <p>如下面的代码片段：<br/></p>
+<table width="100%" border="0" bgcolor="#B0D0B0">
+  <tr><td><pre>
+NncamInstV2 arr[NNCAM_MAX];
+unsigned cnt = Nncam_EnumV2(arr);
+for (unsigned i = 0; i &lt; cnt; ++i)
+    ......
+</pre></td></tr>
+</table><br/>
+<table width="100%" border="0" bgcolor="#B0D0B0">
+<tr><td><pre>
+typedef struct{
+#ifdef _WIN32
+    const wchar_t*     name;     /* model name */
+#else
+    const char*        name;
+#endif
+    unsigned long long flag;     /* NNCAM_FLAG_xxx */
+    unsigned           maxspeed; /* maximum speed level, Nncam_get_MaxSpeed, the speed range = [0, maxspeed], closed interval */
+    unsigned           preview;  /* number of preview resolution, Nncam_get_ResolutionNumber */
+    unsigned           still;    /* number of still resolution, Nncam_get_StillResolutionNumber */
+    unsigned           maxfanspeed; /* maximum fan speed */
+    NncamResolution  res[NNCAM_MAX];
+}NncamModelV2;
+</pre></td></tr>
+</table><br/>
+<div align="center">
+<table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+ <tr>
+   <td width="8%" valign="top">name</td>
+   <td colspan="2" valign="top">型号名称</td>
+   </tr>
+ <tr>
+   <td width="8%" rowspan="37" valign="top">flag</td>
+   <td colspan="2" valign="top">位标记 (Bitwise flag)</td>
+   </tr>
+ <tr>
+   <td valign="top">NNCAM_FLAG_CMOS</td>
+   <td valign="top">cmos传感器</td>
+ </tr>
+ <tr>
+   <td valign="top">NNCAM_FLAG_CCD_PROGRESSIVE</td>
+   <td valign="top">逐行ccd传感器</td>
+ </tr>
+ <tr>
+   <td valign="top">NNCAM_FLAG_CCD_INTERLACED</td>
+   <td valign="top">隔行ccd传感器</td>
+ </tr>
+ <tr>
+   <td valign="top">NNCAM_FLAG_ROI_HARDWARE</td>
+   <td valign="top">支持硬件ROI.所谓硬件ROI和软件ROI，前者设置sensor的工作参数，从sensor读取的数据减少（从而提高帧率）;后者不改变sensor的工作参数，从sensor读取的数据量不变，上层软件把原始图像剪切到目标ROI矩形大小.</td> 	
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_MONO</td>
+   <td width="63%" valign="top">黑白传感器</td>
+ </tr>
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_BINSKIP_SUPPORTED</td>
+   <td width="63%" valign="top">支持bin/skip模式, 请参考<a href="#binskip">Nncam_put_Mode和Nncam_get_Mode</a></td>
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_USB30</td>
+   <td width="63%" valign="top">USB3.0</td>
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_TEC</td>
+   <td width="63%" valign="top">TEC制冷相机</td>
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_USB30_OVER_USB20</td>
+   <td width="63%" valign="top">usb3.0 相机被插入usb2.0端口</td>
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_ST4</td>
+   <td width="63%" valign="top">支持ST4端口</td>
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_GETTEMPERATURE</td>
+   <td width="63%" valign="top">支持读取温度, Nncam_get_Temperature</td>
+ </tr>
+ <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_PUTTEMPERATURE</td>
+   <td width="63%" valign="top">支持设置传感器目标温度, Nncam_put_Temperature</td>
+ </tr>  
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_RAW10</td>
+   <td width="63%" valign="top">Pixel format, RAW 10 bits</td>
+ </tr>
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_RAW12</td>
+   <td width="63%" valign="top">Pixel format, RAW 12 bits</td>
+ </tr>
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_RAW14</td>
+   <td width="63%" valign="top">Pixel format, RAW 14 bits</td>
+ </tr>
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_RAW16</td>
+   <td width="63%" valign="top">Pixel format, RAW 16 bits</td>
+ </tr>
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_FAN</td>
+   <td width="63%" valign="top">支持制冷风扇</td>
+ </tr>
+  <tr>
+   <td width="29%" valign="top">NNCAM_FLAG_TEC_ONOFF</td>
+   <td width="63%" valign="top">TEC制冷装置支持开启/关闭，TEC制冷的目标温度，见：<br/>
+							NNCAM_OPTION_TEC<br/>
+							NNCAM_OPTION_TECTARGET</td>
+ </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_ISP</td>
+    <td valign="top">支持硬件ISP (Image Signal Processing)，降低CPU进行图像处理时的CPU利用率</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_TRIGGER_SOFTWARE</td>
+    <td valign="top">支持软件触发模式</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_TRIGGER_EXTERNAL</td>
+    <td valign="top">支持外触发模式</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_TRIGGER_SINGLE</td>
+    <td valign="top">只支持单帧触发模式，单次触发只能获取一张图片.</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_BLACKLEVEL</td>
+    <td valign="top">支持设置和获取</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_FOCUSMOTOR</td>
+    <td valign="top">支持对焦马达</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_AUTO_FOCUS</td>
+    <td valign="top">支持自动对焦</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_BUFFER</td>
+    <td valign="top">帧缓冲</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_CG</td>
+    <td valign="top">转换增益(Conversion Gain): LCG, HCG</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_CGHDR</td>
+    <td valign="top">转换增益(Conversion Gain): LCG, HCG, HDR</td>
+  </tr>
+  <tr>
+    <td valign="top"><a id="ddr">NNCAM_FLAG_DDR</a></td>
+    <td valign="top">使用超大容量DDR(Double Data Rate SDRAM)作帧缓冲</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_YUV411</td>
+    <td valign="top">pixel format, yuv411</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_YUV422</td>
+    <td valign="top">pixel format, yuv422</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_YUV444</td>
+    <td valign="top">pixel format, yuv444</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_RGB888</td>
+    <td valign="top">pixel format, RGB888</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_RAW8</td>
+    <td valign="top">pixel format, RAW 8 bits</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_GMCY8</td>
+    <td valign="top">pixel format, GMCY, 8bits</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_GMCY12</td>
+    <td valign="top">pixel format, GMCY, 12 btis</td>
+  </tr>
+  <tr>
+    <td valign="top">NNCAM_FLAG_GLOBALSHUTTER</td>
+    <td valign="top">全局快门</td>
+  </tr>
+ <tr>
+   <td width="8%" valign="top">maxspeed</td>
+   <td colspan="2" valign="top">最大速度等级，和函数Nncam_get_MaxSpeed返回值相同. 速度范围是[0, maxspeed]. 可以通过Nncam_put_Speed设置速度等级, Nncam_get_Speed获取当前速度等级</td>
+   </tr>
+ <tr>
+   <td width="8%" valign="top">preview</td>
+   <td colspan="2" valign="top">预览分辨率的个数. 和函数Nncam_get_ResolutionNumber返回值相同</td>
+   </tr>
+ <tr>
+   <td width="8%" valign="top">still</td>
+   <td colspan="2" valign="top">静态抓拍分辨率个数, 0表示不支持静态抓拍. 和函数Nncam_get_StillResolutionNumber返回值相同</td>
+   </tr>
+  <tr>
+   <td width="8%" valign="top">res</td>
+   <td colspan="2" valign="top">分辨率宽度和高度</td>
+   </tr>
+</table>
+</div>
+</blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_HotPlug</font></h2>
+  <p><strong>返回值：</strong>无</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>PNNCAM_HOTPLUG pHotPlugCallback: 回调函数</p>
+    <blockquote>
+    <table width="100%" border="0" bgcolor="#B0D0B0">
+      <tr>
+        <td><div align="center">typedef void (*PNNCAM_HOTPLUG)(void* pCallbackCtx);</div></td>
+      </tr>
+    </table>
+  </blockquote>    
+    <p>void* pCallbackCtx: 回调函数上下文</p>
+  </blockquote>
+  <p><strong>说明：</strong></p><blockquote>
+  <p>本函数只存在于macOS, Linux和Android平台.</p>
+  <p>在Windows平台处理设备插入/拔出通知，请参阅MSDN(<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa363224(v=vs.85).aspx">Device Management</a>, <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa363215(v=vs.85).aspx">Detecting Media Insertion or Removal</a>).</p>
+  <p>在Linux/macOS/Android平台，如果需要处理设备插入/拔出通知，调用本函数注册回调函数. 当设备被插入/拔出时时，程序通过回调函数得到通知，然后调用Nncam_EnumV2重新枚举设备即可.</p>
+  <p>macOS平台下也可以使用IONotificationPortCreate系列API.</p>
+  <p>建议: 当设备插入通知到达时，建议不要立即打开句柄，而是<b>延时一小段时间（如200毫秒）之后再打开</b>，这样稳定性更好.</p>
+</blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_Open</font></h2>
+    <p> <strong>返回值：</strong>HNnCam句柄.失败时返回NULL（如设备被突然拔出等等）</p>
+    <p><strong>参数：</strong>NnCam相机实例，由Nncam_EnumV2枚举得到.<strong>如果</strong><strong>id</strong><strong>是NULL</strong><strong>则自动打开第一个相机，所以，如果不关心多个相机实例同时连入电脑的情况，Nncam_EnumV2</strong><strong>不是必须的，直接传入参数NULL</strong><strong>打开唯一的相机实例.</strong></p>
+    <p><strong>说明：</strong>打开相机实例.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_Close</font></h2>
+    <p><strong>返回值：</strong>无</p>
+    <p><strong>参数：</strong>HNnCam句柄</p>
+    <p><strong>说明：</strong>关闭相机实例.句柄关闭之后，请不要再使用之.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_StartPullModeWithWndMsg, Nncam_StartPullModeWithCallback</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+    <blockquote>
+      <p>HNnCam h：由Nncam_Open打开的实例句柄</p>
+      <p>HWND hWnd: 事件发生时，消息将Post到这个窗口</p>
+      <p>UINT nMsg: Windows自定义消息类型.消息的WPARAM参数是事件类型NNCAM_EVENT_xxxx，LPARAM参数不用（恒等于0）</p>
+      <p>PNNCAM_EVENT_CALLBACK pEventCallback, void* pCallbackContext：用户程序指定的回调函数和回调上下文参数.</p>
+      <blockquote>
+        <table width="100%" border="0">
+          <tr>
+            <td bgcolor="#B0D0B0"><div align="center">typedef void (*PNNCAM_EVENT_CALLBACK)(unsigned nEvent, void* pCallbackCtx);</div></td>
+          </tr>
+        </table>
+      </blockquote>
+	  <p>请参阅<a href="#callback">这里</a>.</p>
+    </blockquote>
+    <p><strong>说明：</strong>很明显，Nncam_StartPullModeWithWndMsg只支持Windows系统</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF"><a id="infov2">Nncam_PullImageV2, Nncam_PullStillImageV2, Nncam_PullImageWithRowPitchV2, Nncam_PullStillImageWithRowPitchV2</a>,
+Nncam_PullImage, Nncam_PullStillImage, <a id="rowpitch1">Nncam_PullImageWithRowPitch</a>, <a id="rowpitch2">Nncam_PullStillImageWithRowPitch</a></font></h2>
+      <p><strong>返回值：</strong>HRESULT类型表示成功失败，不存在图像可供获取时返回E_FAIL</p>
+      <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：由Nncam_Open打开的实例句柄</p>
+    <p>void* pImageData：数据缓冲区.用户应用程序必须确保改缓冲区足够大以容纳图像数据.缓冲区大小必须 >= rowPitch * nHeight</p>
+    <p>int bits：图像颜色位数，支持24, 32, 48, 8和16，分别代表RGB24, RGB32, RGB48, 8位灰度, 16位灰度图像. 本参数在RAW模式下没有意义，被忽略</p>
+    <p>int rowPitch: 行间距(Stride, 跨距)，行与行之间的间距，=0表示默认使用行间距</p>
+    <p>unsigned* pnWidth, unsigned* pnHeight：输出参数，图像的宽度高度</p>
+	<p>NncamFrameInfoV2* pInfo：输出参数，图像Info. 一些相机支持帧序号和帧时间戳，其它不支持的相机始终为0</p>
+  </blockquote>
+  <p><strong>说明：</strong>当pImageData为NULL而pnWidth, pnHeight参数不为NULL的时候，可以获取(Peek)是否存在图像以及图像的宽度高度信息</p>
+  <blockquote>请保证pImageData缓冲区的大小足够容纳整帧数据，请看下表:
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td colspan="2" valign="top">格式</td>
+        <td width="63%" valign="top">默认行间距(跨距)</td>
+      </tr>	
+      <tr>
+        <td width="10%" rowspan="4" valign="top">RGB</td>
+        <td width="27%" valign="top">RGB24</td>
+        <td width="63%" valign="top">TDIBWIDTHBYTES(24 * Width)</td>
+      </tr>
+      <tr>
+        <td width="27%" valign="top">RGB32</td>
+        <td width="63%" valign="top">Width * 4</td>
+      </tr>
+      <tr>
+        <td width="27%" valign="top">RGB48</td>
+        <td width="63%" valign="top">TDIBWIDTHBYTES(48 * Width)</td>
+      </tr>
+      <tr>
+        <td width="27%" valign="top">RGB8灰度图像</td>
+        <td width="63%" valign="top">TDIBWIDTHBYTES(8 * Width)</td>
+      </tr>
+      <tr>
+        <td width="10%" rowspan="2" valign="top">RAW</td>
+        <td width="27%" valign="top">8bits模式</td>
+        <td width="63%" valign="top">Width</td>
+      </tr>
+      <tr>
+        <td width="27%" valign="top">10bits, 12bits, 14bits, 16bits模式</td>
+        <td width="63%" valign="top">Width * 2</td>
+      </tr>
+    </table>
+  </div><br/>
+<div align="center"><table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+  <tr>
+   <td>#ifndef TDIBWIDTHBYTES<br/>
+#define TDIBWIDTHBYTES(bits)&nbsp;&nbsp;&nbsp;&nbsp;((unsigned)(((bits) + 31) &amp; (~31)) / 8)<br/>
+#endif<br/></td>
+  </tr>
+</table></div>
+</blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_StartPushModeV3</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+    <blockquote>
+      <p>HNnCam h：由Nncam_Open打开的实例句柄</p>
+      <p>PNNCAM_DATA_CALLBACK_V3 pDataCallback, void* pDataCallbackCtx：用户程序指定的回调函数和回调上下文参数. nncam.dll内部从相机得到的图像数据后，会回调该函数.</p>
+	  <p>PNNCAM_EVENT_CALLBACK pEventCallback, void* pEventCallbackContext:</p>
+    </blockquote>
+    <blockquote>
+        <table width="100%" border="0">
+          <tr><td>
+			typedef void (*PNNCAM_DATA_CALLBACK_V3)(const void* pData, const NncamFrameInfoV2* pInfo, int bSnap, void* pCallbackCtx);</td>
+          </tr>
+        </table><p>请参阅<a href="#callback">这里</a>.</p>
+    </blockquote>
+  	<blockquote>
+    <p align="left">如果回调时，pData参数==NULL，表示发生内部错误（如相机被突然拔出等等）. <br/>
+      数据pData的行间距(row pitch, stride, 跨距)是默认值.<br/>    	
+      int bSnap参数，TRUE表示是由Nncam_Snap或Nncam_SnapN函数发起的图片抓拍，FALSE表示普通的预览图片（视频）. <br/></p>
+  </blockquote>
+  <p><strong>说明：</strong>开启相机实例.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_Stop</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+  <p><strong>参数：</strong>HNnCam句柄</p>
+  <p><strong>说明：</strong>停止相机实例. 停止之后，可以调用Nncam_StartPushMode重新开启.比如切换视频分辨率：</p>
+  <blockquote>
+    <p>步骤1：调用Nncam_Stop停止</p>
+    <p>步骤2：调用Nncam_put_Size或者Nncam_put_eSize设置新分辨率</p>
+    <p>步骤3：调用Nncam_StartPullModeWithWndMsg或Nncam_StartPullModeWithCallback或Nncam_StartPushModeV3重新开启</p>
+  </blockquote>  
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_Pause</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong>HNnCam句柄</p>
+    <p><strong>说明：</strong>暂停或者继续相机实例</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_Snap, Nncam_SnapN</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+    <blockquote>
+      <p>HNnCam h：相机实例句柄</p>
+      <p>unsigned nResolutionIndex：想要抓拍的分辨率序号.</p>
+	  <p><a id="snapn">unsigned nNum: 抓拍图像张数.</a></p>
+    </blockquote>
+  <p><strong>说明：</strong>抓拍“静态”图片，请参阅<a href="#stillcapture">这里</a>. 抓拍成功之后，如果是Push Mode, 则通过NNCAM_EVENT_STILLIMAGE通知. 如果是Push Mode则通过PNNCAM_DATA_CALLBACK_V3回调函数返回，其中回调函数的参数BOOL bSnap设为TRUE.</p>
+  <blockquote>
+    <p align="left">有些相机支持在预览视频的不间断的情况下，抓拍单张的不同于正在视频预览的分辨率的所谓静态图片.例如UCMOS03100KPA，正在预览的分辨率是1024*768，调用Nncam_Snap(h, 0)抓拍单张第0号分辨率（2048*1536）的图片.预览使用小分辨率（追求更快的帧率），抓拍使用大分辨率（追求更好的图片质量）.这种行为，称之为“静态抓拍”. <br/>
+      对于不支持静态抓拍的相机型号，则参数nResolutionIndex的值必须等于当前正在预览的分辨率，否则，函数返回E_UNEXPECTED. <br/>
+      某个型号是否支持静态抓拍能力，参见NncamModelV2的still域(大于0).</p>
+	<p align="left">Nncam_Snap(h, index) == Nncam_SnapN(h, index, 1)</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_Trigger</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败.</p>
+    <p><strong>参数：</strong></p>
+    <blockquote>
+      <p>HNnCam h：相机实例句柄</p>
+      <p>unsigned short nNumber: 0xffff(一直触发),0(取消触发),其他值(触发图片的张数)</p>
+    </blockquote>
+  <p><strong>说明：</strong>触发模式下，调用本函数进行软件触发. 触发成功之后，如果是Push Mode, 则通过NNCAM_EVENT_IMAGE通知. 如果是Push Mode则通过PNNCAM_DATA_CALLBACK_V3回调函数返回，其中回调函数的参数BOOL bSnap设为FALSE.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_Size, Nncam_get_Size, Nncam_put_eSize, Nncam_get_eSize</font></h2>
+      <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+      <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned nResolutionIndex：当前分辨率序号</p>
+    <p>int nWidth, int nHeight：当前分辨率的宽度高度</p>
+  </blockquote>
+  <p><strong>说明：</strong>设置或者得到当前分辨率.</p>
+  <blockquote>
+    <p align="left">设置分辨率应该在Nncam_StartPullModeWithWndMsg或Nncam_StartPullModeWithCallback或Nncam_StartPushModeV3之前进行. <br/>
+      有2种方法设置当前分辨率，一种是通过分辨率的序号，一种是通过宽度/高度.两种方法是等效的.比如UCMOS03100KPA支持以下3种分辨率:<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;序号0: 2048, 1536<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;序号1: 1024, 768<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;序号2: 680, 510<br/>
+      所以Nncam_put_Size(h, 1024, 768) or Nncam_put_eSize(h, 1)效果一样.</p>
+  </blockquote>
+</li></ul>  
+<ul><li><h2><font color="#0000FF">Nncam_put_Size, Nncam_get_Size, Nncam_put_eSize, Nncam_get_eSize</font></h2>
+      <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+      <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned nResolutionIndex：当前分辨率序号</p>
+    <p>int nWidth, int nHeight：当前分辨率的宽度高度</p>
+  </blockquote>
+  <p><strong>说明：</strong>设置或者得到当前分辨率.</p>
+  <blockquote>
+    <p align="left">设置分辨率应该在Nncam_StartPullModeWithWndMsg或Nncam_StartPullModeWithCallback或Nncam_StartPushModeV3之前进行. <br/>
+      有2种方法设置当前分辨率，一种是通过分辨率的序号，一种是通过宽度/高度.两种方法是等效的.比如UCMOS03100KPA支持以下3种分辨率:<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;序号0: 2048, 1536<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;序号1: 1024, 768<br/>
+  &nbsp;&nbsp;&nbsp;&nbsp;序号2: 680, 510<br/>
+      所以Nncam_put_Size(h, 1024, 768) or Nncam_put_eSize(h, 1)效果一样.</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF"><a id="roi">Nncam_put_Roi, Nncam_get_Roi</a></font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败.</p>
+    <p><strong>参数：</strong></p>
+    <blockquote>
+      <p>HNnCam h: 相机实例句柄</p>
+      <p>unsigned xOffset: x偏移，必须是偶数</p>
+      <p>unsigned yOffset: y偏移，必须是偶数</p>
+      <p>unsigned xWidth: 宽度. 最小值16，必须是偶数</p>
+      <p>unsigned yHeight: 高度. 最小值16，必须是偶数</p>
+    </blockquote>
+  <p><strong>说明: </strong>设置/获取ROI. Nncam_put_Roi(h, 0, 0, 0, 0)表示清除ROI恢复原始尺寸.</p>
+  <blockquote>
+  	<p><strong>重要提示: 不允许在PNNCAM_EVENT_CALLBACK和PNNCAM_DATA_CALLBACK_V3的回调上下文中调用Nncam_put_Roi，否则返回E_WRONG_THREAD.</strong></p>
+	<p><strong>注意：坐标永远是相对原始分辨率而言的</strong>，请参阅<a href="#cord">这里</a></p>
+  	<p>例外: UHCCD03100KPB, UHCCD05000KPA, UHCCD05100KPA的小分辨率不支持ROI功能, 函数返回值是E_NOTIMPL。</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_ResolutionNumber, Nncam_get_Resolution</font></h2>
+      <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+      <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned nResolutionIndex：分辨率序号</p>
+    <p>int* pWidth, int* pHeight：宽度、高度</p>
+  </blockquote>
+  <p><strong>说明：</strong>Nncam_get_ResolutionNumber得到支持的分辨率个数（如UCMOS03100KPA返回3，表示支持3种分辨率）.Nncam_get_Resolution得到每种分辨率的高度/宽度.</p>
+  <blockquote>
+    <p align="left">这些参数在Nncam_EnumV2返回相机实例的NncamModelV2都已经包含.</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_RawFormat</font></h2>
+      <p><strong>返回值：</strong>HRESULT类型表示成功失败.</p>
+      <p><strong>参数：</strong>   </p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned* nFourCC：格式类型，见下表</p>
+    <p>unsigned* bitsperpixel：Bits per Pixel，如8, 10, 12, 14, 16, 24</p>
+<div align="center"><table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+  <tr>
+   <td>#ifndef MAKEFOURCC<br/>
+#define MAKEFOURCC(a, b, c, d) ((unsigned)(unsigned char)(a) | ((unsigned)(unsigned char)(b) &lt;&lt; 8) | ((unsigned)(unsigned char)(c) &lt;&lt; 16) | ((unsigned)(unsigned char)(d) &lt;&lt; 24))<br/>
+#endif<br/></td>
+  </tr>
+</table></div><br/>
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td width="40%" valign="top">MAKEFOURCC('G', 'B', 'R', 'G')</td>
+        <td width="60%" valign="top">GBGBGB...<br/>RGRGRG...<br/>GBGBGB...<br/>RGRGRG...<br/>...<br/>请参阅<a href="http://www.siliconimaging.com/RGB%20Bayer.htm">这里</a></td>
+      </tr>
+      <tr>
+        <td>MAKEFOURCC('R', 'G', 'G', 'B')</td>
+        <td>RGRGRG...<br/>GBGBGB...<br/>RGRGRG...<br/>GBGBGB...<br/>...<br/></td>
+      </tr>
+      <tr>
+        <td>MAKEFOURCC('B', 'G', 'G', 'R')</td>
+        <td>BGBGBG...<br/>GRGRGR...<br/>BGBGBG...<br/>GRGRGR...<br/>...<br/></td>
+      </tr>
+      <tr>
+        <td>MAKEFOURCC('G', 'R', 'B', 'G')</td>
+        <td>GRGRGR...<br/>BGBGBG...<br/>GRGRGR...<br/>BGBGBG...<br/>...<br/></td>
+      </tr>
+      <tr>
+        <td>MAKEFOURCC('V', 'U', 'Y', 'Y')</td>
+        <td>YUV4:2:2, 请参阅: <a href="http://www.fourcc.org">http://www.fourcc.org</a></td>
+      </tr>
+      <tr>
+        <td>MAKEFOURCC('U', 'Y', 'V', 'Y')</td>
+        <td>YUV4:2:2</td>
+      </tr>
+      <tr>
+        <td>MAKEFOURCC('Y', 'Y', 'Y', 'Y')</td>
+        <td>黑白相机</td>
+      </tr>
+    </table>
+  </div></blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_Option, Nncam_get_Option</font></h2>
+      <p><strong>返回值：</strong>HRESULT类型表示成功失败.</p>
+      <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned iOption：选项，见下表</p>
+    <p>int iValue：值，见下表</p>
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td width="21%">选项</td>
+        <td width="52%">说明</td>
+		<td width="6%">默认值</td>
+		<td width="21%">是否可以在调用Nncam_StartPullModeWithWndMsg或Nncam_StartPullModeWithCallback或Nncam_StartPushModeV3之后设置该值<br/>
+		<b>The value can be changed on-the-fly?</b></td>
+      </tr>
+      <tr>
+        <td>NNCAM_OPTION_NOFRAME_TIMEOUT</td>
+        <td>一定时间没有获取到任何一帧完整数据，就报错.<br/>
+          1 = 使能本特性;<br/>0 = 禁用</td>
+		<td>0</td>
+		<td>是</td>
+      </tr>
+      <tr>
+        <td>NNCAM_OPTION_THREAD_PRIORITY</td>
+        <td>设置内部线程的优先级.<br/>
+          0 = THREAD_PRIORITY_NORMAL;<br/>1 = THREAD_PRIORITY_ABOVE_NORMAL;<br/>2 = THREAD_PRIORITY_HIGHEST;<br/>3 = THREAD_PRIORITY_TIME_CRITICAL;<br/>请参阅: <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms686277(v=vs.85).aspx">SetThreadPriority</a><br/>本选项在Linux和macOS平台下被忽略.</td>
+		<td>1</td>
+		<td>是</td>
+      </tr>
+      <tr>
+        <td>NNCAM_OPTION_PROCESSMODE</td>
+        <td>0：full模式，图像质量更好，但是更耗费CPU.<br/>
+          1: fast模式，图像质量差些，耗费更少的CPU.<br/>根据具体的使用情况选择FULL模式还是FAST模式.</td>
+		<td>0</td>
+		<td>是</td>
+      </tr>
+      <tr>
+        <td><a id="rawo">NNCAM_OPTION_RAW</a></td>
+        <td>0表示使用RGB模式.<br/>
+          1表示RAW模式，直接获取底层传感器数据.</td>
+		<td>0</td>
+		<td><b>否</b><br/>
+		  (在相机已经开启的情况下，设置本选项，函数返回E_UNEXPECTED)</td>
+      </tr>
+	  <tr>
+	  	<td>NNCAM_OPTION_BITDEPTH</td>
+		<td>一些型号的相机支持大于8Bits的位深度(Bit Depth)，如10,12,14,16等.<br/>
+		  0表示使用8Bits位深度.<br/>1表示使用本相机支持的最高位深度</td>
+		<td>NA</td>
+		<td>是</td>
+	  </tr>
+      <tr>
+      	<td>NNCAM_OPTION_FAN</td>
+      	<td>一些型号的相机支持制冷风扇.<br/>
+      	  0 = 关闭风扇<br/>[1, max] = 风扇速率</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_TEC</td>
+      	<td>一些型号的相机支持开启关闭TEC制冷装置.<br/>
+      	  0 = 关闭TEC制冷<br/>1 = 开启TEC制冷</td>
+      	<td>1</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_WBGAIN</td>
+      	<td>0 = 关闭内部白平衡增益<br/>
+      	  1 = 开启内部白平衡增益</td>
+      	<td>1</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_TRIGGER</td>
+      	<td>0 = 视频模式<br/>
+      	  1 = 软件或模拟触发模式<br/>
+      	  2 = 外部触发(模式</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="rgb">NNCAM_OPTION_RGB</a></td>
+      	<td>0 = 使用RGB24<br/>
+				1 = 在位深度>8时，启用RGB48格式<br/>
+				2 = 使用RGB32<br/>
+				3 = 8位灰度(只对黑白相机有效)<br/>
+				4 = 16位灰度(只对黑白相机并且位深度>8时有效)</td>
+      	<td>0</td>
+      	<td><b>否</b><br/>
+      	  (在相机已经开启的情况下，设置本选项，函数返回E_UNEXPECTED)</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_TECTARGET</td>
+      	<td>获取和设置TEC制冷的目标温度，单位0.1℃. 例如, 125表示12.5℃，-35表示-3.5℃</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="aepolicy">NNCAM_OPTION_AUTOEXP_POLICY</a></td>
+      	<td>自动曝光策略:<br/>0: 仅曝光<br/>1: 曝光优先<br/>2: 仅模拟增益<br/>3: 模拟增益优先</td>
+      	<td>1</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="aepolicy">NNCAM_OPTION_AUTOEXP_THRESHOLD</a></td>
+      	<td>自动曝光阈值,范围: [5~15]</td>
+      	<td>5</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_FRAMERATE</td>
+      	<td>帧率限制（每秒帧数），范围[0, 63]. <br/>触发模式下帧率控制自动禁用.</td>
+      	<td>0<br/>(表示不限制)</td>
+      	<td><b>否</b><br/>
+      	  (在相机已经开启的情况下，设置本选项，函数返回E_UNEXPECTED)</td>
+      </tr>
+      <tr>
+      	<td><a id="demosaic">NNCAM_OPTION_DEMOSAIC</a></td>
+      	<td>视频和静态图像的Demosaic算法：(请参阅<a href="https://en.wikipedia.org/wiki/Demosaicing">https://en.wikipedia.org/wiki/Demosaicing</a>)<br/>
+      			0 = BILINEAR<br/>
+      			1 = VNG(Variable Number of Gradients interpolation)<br/>
+      			2 = PPG(Patterned Pixel Grouping interpolation)<br/>
+      			3 = AHD(Adaptive Homogeneity-Directed interpolation)<br/>
+      			对于黑白相机始终返回E_NOTIMPL.</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_DEMOSAIC_VIDEO</td>
+      	<td>视频的Demosaic算法</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_DEMOSAIC_STILL</td>
+      	<td>静态图像的Demosaic算法<br/>
+      			对于不支持静态抓拍的相机返回E_NOTIMPL.</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="blacklevel">NNCAM_OPTION_BLACKLEVEL</a></td>
+      	<td>暗电平(Black Level)<br/>
+      			对于不支持暗电平的相机返回E_NOTIMPL.</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_MULTITHREAD</td>
+      	<td>多线程图像处理</td>
+      	<td>1</td>
+      	<td><b>否</b><br/>
+						(在相机已经开启的情况下，设置本选项，函数返回E_UNEXPECTED)</td>
+      </tr>
+      <tr>
+      	<td><a id="binning">NNCAM_OPTION_BINNING</a></td>
+      	<td>数字binning:<br/>
+					0x01 (无binning)<br/>
+					0x02 (加法, 2*2)<br/>
+					0x03 (加法, 3*3)<br/>
+					0x04 (加法, 4*4)<br/>
+					0x82 (平均, 2*2)<br/>
+					0x83 (平均, 3*3)<br/>
+					0x84 (平均, 4*4)</td>
+      	<td>1</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="rotate">NNCAM_OPTION_ROTATE</a></td>
+      	<td>顺时针旋转: 0°, 90°, 180°, 270°</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_UPSIDE_DOWN</td>
+      	<td>倒置:<br/>1: yes<br/>0: no</td>
+      	<td>Win: 1<br/>Linux/MacOS/Android: 0</td>
+      	<td>否</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_CG</td>
+      	<td>转换增益(Conversion Gain):<br/>
+						0: LCG<br/>
+						1: HCG<br/>
+						2: HDR</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_PIXEL_FORMAT</td>
+      	<td>pixel format</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="ddrdepth">NNCAM_OPTION_DDR_DEPTH</a></td>
+      	<td>DDR最多可以缓存的帧数:<br/>
+						1: DDR最大缓存一帧<br/>
+						0: 自动，视频模式下自动曝光开启时为1，其他为全部容量<br/>
+					   -1: DDR最多可缓存至DDR全部容量</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="ffc">NNCAM_OPTION_FFC</a></td>
+      	<td>平场校正(Flat Field Correction):<br/>
+					设置(set):
+                        <blockquote>0: 禁用</blockquote>
+                        <blockquote>1: 启用</blockquote>
+						<blockquote>-1: 重置</blockquote>
+                        <blockquote>(0xff000000 | n): 设置平均数为n, [1~255]</blockquote>
+                    获取(get):
+                        <blockquote>(val &amp; 0xff): 0 -&gt; 禁用, 1 -&gt; 启用, 2 -&gt; 已初始化</blockquote>
+                        <blockquote>((val &amp; 0xff00) &gt;&gt; 8): 序号</blockquote>
+                        <blockquote>((val &amp; 0xff0000) &gt;&gt; 8): 平均数</blockquote></td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td><a id="dfc">NNCAM_OPTION_DFC</a></td>
+      	<td>暗场校正(Dark Field Correction):<br/>
+					设置(set):
+                        <blockquote>0: 禁用</blockquote>
+                        <blockquote>1: 启用</blockquote>
+						<blockquote>-1: 重置</blockquote>
+                        <blockquote>(0xff000000 | n): 设置平均数为n, [1~255]</blockquote>
+                    获取(get):
+                        <blockquote>(val &amp; 0xff): 0 ->&gt; 禁用, 1 -&gt; 启用, 2 -&gt; 已初始化</blockquote>
+                        <blockquote>((val &amp; 0xff00) &gt;&gt; 8): 序号</blockquote>
+                        <blockquote>((val &amp; 0xff0000) &gt;&gt; 8): 平均数</blockquote></td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_SHARPENING</td>
+      	<td>锐化, (threshold &lt;&lt; 24) | (radius &lt;&lt; 16) | strength)<br/>
+			<blockquote>强度(strength): [0, 500], default: 0 (disable)</blockquote>
+			<blockquote>半径(radius): [1, 10]</blockquote>
+			<blockquote>阈值(threshold): [0, 255]</blockquote></td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_FACTORY</td>
+      	<td>恢复出厂设置. 请注意恢复出厂设置可能导致分辨率改变<br/>Only put</td>
+      	<td>恒为0</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_TEC_VOLTAGE</td>
+      	<td>获取TEC的当前工作电压，单位0.1伏，如59代表5.9伏.<br/>
+			请不要过于频繁获取本值，建议间隔2秒或以上<br/>Only get</td>
+      	<td>NA</td>
+      	<td>NA</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_TEC_VOLTAGE_MAX</td>
+      	<td>获取TEC的最大工作电压，单位0.1伏，如59代表5.9伏.<br/>Only get</td>
+      	<td>NA</td>
+      	<td>NA</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_DEVICE_RESET</td>
+      	<td>重置相机的usb连接，相当于模拟一次重新插拔.<br/>Only put</td>
+      	<td>NA</td>
+      	<td>NA</td>
+      </tr>
+	  <tr>
+      	<td>NNCAM_OPTION_AFPOSITION</td>
+      	<td>自动对焦位置</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+	  <tr>
+      	<td>NNCAM_OPTION_AFMODE</td>
+      	<td>自动对焦模式:<br/>0: 手动<br/>1: 自动<br/>2: 单击<br/>3: 共轭校准</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+	  <tr>
+      	<td>NNCAM_OPTION_AFZONE</td>
+      	<td>自动对焦区域</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+	  <tr>
+      	<td>NNCAM_OPTION_AFFEEDBACK</td>
+      	<td>自动对焦反馈信息:<br/>0: 未知<br/>1: 聚焦<br/>2: 正在对焦<br/>3: 离焦<br/>4: 上<br/>5: 下<br/>Only get</td>
+      	<td>NA</td>
+      	<td>是</td>
+      </tr>
+	  <tr>
+      	<td>NNCAM_OPTION_TESTPATTERN</td>
+      	<td>test pattern:<br/>0: TestPattern Off<br/>3: monochrome diagonal stripes<br/>5: monochrome vertical stripes<br/>7: monochrome horizontal stripes<br/>9: chromatic diagonal stripes<br/>Only put</td>
+      	<td>0</td>
+      	<td>是</td>
+      </tr>
+	  <tr>
+      	<td>NNCAM_OPTION_LINEAR</td>
+      	<td>0 = 关闭内部linear tone mapping<br/>
+      	  1 = 开启内部linear tone mapping</td>
+      	<td>1</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_CURVE</td>
+      	<td>0 = 关闭内部curve tone mapping<br/>
+      	  1 = 开启内部多项式拟合curve tone mapping<br/>
+		  2 = 开启内部对数拟合tone mapping</td>
+      	<td>2</td>
+      	<td>是</td>
+      </tr>
+      <tr>
+      	<td>NNCAM_OPTION_COLORMATIX</td>
+      	<td>0 = 关闭内部颜色矩阵<br/>
+      	  1 = 开启内部颜色矩阵</td>
+      	<td>1</td>
+      	<td>是</td>
+      </tr>
+    </table>
+  </div>
+  <p><strong>重要提示: </strong></p>
+  <p><strong>a. 部分设置只可以在相机没有Start的情况下修改，也即不能被changed on-the-fly.</strong></p>
+  <p><strong>b. 不允许在PNNCAM_EVENT_CALLBACK和PNNCAM_DATA_CALLBACK_V3的回调上下文中调用Nncam_put_Option设置NNCAM_OPTION_TRIGGER, NNCAM_OPTION_BITDEPTH, NNCAM_OPTION_PIXEL_FORMAT, NNCAM_OPTION_BINNING, NNCAM_OPTION_ROTATE，否则返回E_WRONG_THREAD.</strong></p>
+  <p>c. UHCCD03100KPB, UHCCD05000KPA, UHCCD05100KPA的小分辨率不支持RAW模式.</p>
+</blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_RealTime, Nncam_get_RealTime</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int bEnable：TRUE or FALSE</p>
+  </blockquote>
+  <p><strong>说明：</strong>如果设置RealTime模式为TRUE，更短的帧延时，但是帧速率降低，流畅性受损.缺省设为FALSE，一般不需要改动.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_AutoExpoEnable, Nncam_put_AutoExpoEnable, Nncam_get_AutoExpoTarget, Nncam_put_AutoExpoTarget, Nncam_put_MaxAutoExpoTimeAGain, Nncam_get_MaxAutoExpoTimeAGain, Nncam_put_MinAutoExpoTimeAGain, Nncam_get_MinAutoExpoTimeAGain</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong>   </p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int bAutoExposure：TRUE or FALSE</p>
+    <p>unsigned short Target：自动曝光目标</p>
+    <p>unsigned maxTime, unsigned short maxAGain：自动曝光的最大曝光时间和最大模拟增益.默认值分别为350ms和500.</p>
+	<p>unsigned minTime, unsigned short minAGain：自动曝光的最小曝光时间和最小模拟增益.默认值分别为0和100.</p>
+  </blockquote>
+  <p><strong>说明：</strong>如果启用自动曝光，软件将自动设置曝光时间和模拟增益使得目标矩形的平均亮度尽量接近曝光目标(见Nncam_put_AEAuxRect, Nncam_get_AEAuxRect).</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_ExpoTime, Nncam_put_ExpoTime, Nncam_get_ExpTimeRange, Nncam_get_RealExpoTime</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned Time：曝光时间，单位微秒</p>
+    <p>unsigned* nMin, unsigned* nMax, unsigned* nDef：曝光时间的最小值，最大值，默认值</p>
+  </blockquote>
+  <p><strong>说明：</strong>曝光时间相关. Nncam_get_RealExpoTime获取基于50HZ/60HZ调整过的曝光时间.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_ExpoAGain, Nncam_put_ExpoAGain, Nncam_get_ExpoAGainRange</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong>   </p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned short AGain：模拟增益，百分比，如200表示增益200%</p>
+    <p>unsigned short* nMin, unsigned short* nMax, unsigned short* nDef：模拟增益的最小值，最大值，默认值</p>
+  </blockquote>
+  <p><strong>说明：</strong>模拟增益相关.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_Hue, Nncam_get_Hue, Nncam_put_Saturation, Nncam_get_Saturation,  Nncam_put_Brightness, Nncam_get_Brightness, Nncam_get_Contrast, Nncam_put_Contrast,  Nncam_get_Gamma, Nncam_put_Gamma</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong>HNnCam h：相机实例句柄</p>
+    <p><strong>说明：</strong>设置或者得到：色度，饱和度，亮度，对比度，Gamma</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_Chrome, Nncam_put_Chrome</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int bChrome：TRUE or FALSE</p>
+  </blockquote>
+  <p><strong>说明：</strong>多色模式或者单色模式.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_VFlip, Nncam_put_VFlip, Nncam_get_HFlip, Nncam_put_HFlip</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong> HNnCam h：相机实例句柄</p>
+    <p><strong>说明：</strong>垂直或者水平翻转</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_Speed, Nncam_get_Speed, Nncam_get_MaxSpeed</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned short nSpeed：帧速率级别</p>
+  </blockquote>
+  <p><strong>说明：</strong>最小帧速率等级是0.最大帧速率级别可以通过Nncam_get_MaxSpeed函数得到，和NncamModelV2的maxspeed是一个意思.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_HZ, Nncam_get_HZ</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int nHZ：0表示60Hz交流，1表示50Hz交流，2表示直流</p>
+  </blockquote>
+  <p><strong>说明：</strong>设置光源的电力供应频率</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_Temperature, Nncam_put_Temperature</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败, E_NOTIMPL表示不支持读取/设置温度</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>short nTemperature：以0.1℃为单位，如32表示3.2℃，-35表示-3.5℃.</p>
+  </blockquote>
+  <p><strong>说明：</strong>读取传感器温度(NNCAM_FLAG_GETTEMPERATURE表示支持读取温度).</p>
+  <blockquote><p>设置传感器目标温度.</p></blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF"><a id="binskip">Nncam_put_Mode, Nncam_get_Mode</a></font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int bSkip：Bin模式或者Skip模式</p>
+  </blockquote>
+  <p><strong>说明：</strong>设置Bin模式或者Skip模式.较高分辨率的相机支持2种采样模式，一种是Bin模式（邻域平均），一种是Skip模式（抽样提取）.相比较而言，前者图像效果较好，但是帧速率降低；后者帧速率较高，但是图像效果较差.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_TempTint, Nncam_get_TempTint</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败. Temp/Tint模式下起作用，RGB Gain模式下不起作用直接返回E_NOTIMPL.</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int nTemp, int nTint：色温和Tint</p>
+  </blockquote>
+  <p><strong>说明：</strong>Temp/Tint模式下设置/获取白平衡的色温和Tint参数.请参阅<a href="#wb">这里</a>.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_AwbOnePush</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败. Temp/Tint模式下起作用，RGB Gain模式下不起作用直接返回E_NOTIMPL.</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>PINNCAM_TEMPTINT_CALLBACK fnTTProc, void* pTTCtx：自动白平衡过程完成时的回调函数以及回调上下文.</p>
+  </blockquote>
+  <p><strong>说明：</strong>Temp/Tint白平衡模式下调用本函数来触发单次自动白平衡功能. 当白平衡参数计算完成的时候, NNCAM_EVENT_TEMPTINT事件会通知应用程序(Pull Mode)和调用回调函数. Pull mode中, 如果不使用回调函数, 请把函数指针设为NULL.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_WhiteBalanceGain, Nncam_get_WhiteBalanceGain</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败. RGB Gain模式下起作用，Temp/Tint模式下不起作用直接返回E_NOTIMPL.</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>int aGain[3]：RGB增益值</p>
+  </blockquote>
+  <p><strong>说明：</strong>RGB Gain模式下设置/获取白平衡的RGB增益值.请参阅<a href="#wb">这里</a>.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_AwbInit</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败. RGB Gain模式下起作用，Temp/Tint模式下不起作用直接返回E_NOTIMPL.</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>PINNCAM_WHITEBALANCE_CALLBACK fnWBProc, void* pWBCtx：自动白平衡过程完成时的回调函数以及回调上下文.</p>
+  </blockquote>
+  <p><strong>说明：</strong>RGB Gain白平衡模式下调用本函数来触发单次自动白平衡功能. 当白平衡参数计算完成的时候, NNCAM_EVENT_WBGAIN事件会通知应用程序(Pull Mode)和调用回调函数. Pull mode中, 如果不使用回调函数, 请把函数指针设为NULL.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF"><a id="black">Nncam_AbbOnePush</a></font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败.</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>PINNCAM_BLACKBALANCE_CALLBACK fnBBProc, void* pBBCtx：自动黑平衡过程完成时的回调函数以及回调上下文.</p>
+  </blockquote>
+  <p><strong>说明：</strong>调用本函数来触发单次自动黑平衡功能. 当黑平衡参数计算完成的时候, NNCAM_EVENT_BLACK事件会通知应用程序(Pull Mode)和调用回调函数. Pull mode中, 如果不使用回调函数, 请把函数指针设为NULL.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_BlackBalance, Nncam_get_BlackBalance</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned short aSub[3]：RGB偏移值</p>
+  </blockquote>
+  <p><strong>说明：</strong>设置/获取黑平衡的RGB偏移值</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_AWBAuxRect, Nncam_get_AWBAuxRect, Nncam_put_AEAuxRect, Nncam_get_AEAuxRect, Nncam_put_ABBAuxRect, Nncam_get_ABBAuxRect</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong>HNnCam h：相机实例句柄</p>
+    <p><strong>说明：</strong>设置/获取自动白平衡和自动曝光和黑平衡的参考矩形.默认矩形位于图像正中央,宽度等于20%图像宽度,高度等于20%图像高度.</p>
+	<p><strong>注意：坐标永远是相对原始分辨率而言的</strong>，请参阅<a href="#cord">这里</a>.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_MonoMode</font></h2>
+    <p><strong>返回值：</strong>S_OK表示单色模式，S_FALSE表示彩色模式</p>
+    <p><strong>参数：</strong>HNnCam h：相机实例句柄</p>
+    <p><strong>说明：</strong>是否单色相机，对应NnCamModelV2的flag: NNCAM_FLAG_MONO</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_MaxBitDepth</font></h2>
+    <p><strong>返回值：</strong>相机支持的最大位深度(Bit Depth)</p>
+    <p><strong>参数：</strong>HNnCam h：相机实例句柄</p>
+    <p><strong>说明：</strong>有些型号的相机支持比8bits更大的位深度，如10, 12, 14, 16等.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_StillResolutionNumber, Nncam_get_StillResolution</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned nResolutionIndex：分辨率序号</p>
+    <p>int* pWidth, int* pHeight：宽度、高度</p>
+  </blockquote>
+  <p><strong>说明：</strong>Nncam_get_StillResolutionNumber得到支持的静态抓拍分辨率个数（如UCMOS03100KPA返回3，表示支持3种分辨率），如果不支持静态抓拍能力，返回0.Nncam_get_StillResolution得到每种分辨率的高度/宽度.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_SerialNumber, Nncam_get_FwVersion, Nncam_get_HwVersion, Nncam_get_ProductionDate, Nncam_get_Revision</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>char sn[32]：存放序列号的缓冲区. 如：TP110826145730ABCD1234FEDC56787</p>
+    <p>char fwver[16]: 存放固件版本号的缓冲区. 如: 3.2.1.20140922</p>
+    <p>char hwver[16]: 存放硬件版本好的缓冲区. 如: 3.12</p>
+    <p>char pdate[10]: 存放生产日期的缓冲区. 如: 20150327</p>
+	<p>unsigned short pRevision: revision</p>
+  </blockquote>
+  <p><strong>说明：</strong>每个相机都有一个唯一的31位的序列号.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_get_PixelSize</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned nResolutionIndex：分辨率序号</p>
+    <p>float* x, float* y: 物理像素大小(μm)</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_LEDState</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned short iLed：LED灯的序号</p>
+    <p>unsigned short iState：LED状态，1代表常亮，2代表闪烁，其它代表熄灭</p>
+    <p>unsigned short iPeriod：闪烁周期，毫秒数. 至少需要500ms.</p>
+  </blockquote>
+  <p><strong>说明：</strong>有些相机上安装有1到n个LED灯，本函数控制这些灯的状态.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_read_EEPROM, Nncam_write_EEPROM</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示失败或读写的字节数</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned addr: EEPROM读写地址</p>
+    <p>const unsigned char* pBuffer: 需要写入EEPROM的数据</p>
+    <p>unsigned char* pBuffer: 读取EEPROM的缓冲区</p>
+    <p>unsigned nBufferLen: 缓冲区长度</p>
+  </blockquote>
+  <p><strong>说明：</strong>有些相机上安装有EEPROM可供读写.读写失败时返回HRESULT错误码（负数），成功时返回读取或者写入的字节数.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_read_EEPROM, Nncam_write_EEPROM</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示失败或读写的字节数</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned addr: EEPROM读写地址</p>
+    <p>const unsigned char* pBuffer: 需要写入EEPROM的数据</p>
+    <p>unsigned char* pBuffer: 读取EEPROM的缓冲区</p>
+    <p>unsigned nBufferLen: 缓冲区长度</p>
+  </blockquote>
+  <p><strong>说明：</strong>有些相机上安装有EEPROM可供读写.读写失败时返回HRESULT错误码（负数），成功时返回读取或者写入的字节数.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_FfcOnePush</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示成功或失败</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_fcOnePush</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示成功或失败</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_IoControl</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示成功或失败</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned index: IO口序号</p>
+    <p>unsigned nType: 控制类型，见下表</p>
+    <p>int outVal: 输出控制值</p>
+	<p>int* inVal: 输入控制值</p>
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td width="40%" valign="top">NNCAM_IOCONTROLTYPE_GET_SUPPORTEDMODE</td>
+        <td width="60%" valign="top">支持的模式：<br/>0x01-&gt;输入<br/>0x02-&gt;输出<br/>(0x01 | 0x02)-&gt;同时支持输入和输出</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_GET_GPIODIR</td>
+        <td>IO方向：0x00->&gt;输入, 0x01->&gt;输出</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_SET_GPIODIR</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_GET_FORMAT</td>
+        <td>格式：<br/>0x00->&gt;未连接<br/>0x01-&gt;三态<br/>0x02-&gt;TTL<br/>0x03-&gt;LVDS<br/>0x04->&gt;RS422<br/>0x05-&gt;光耦隔离</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_SET_FORMAT</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_GET_OUTPUTINVERTER</td>
+        <td>输出反相：boolean, 只支持输出信号</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_SET_OUTPUTINVERTER</td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td>NNCAM_IOCONTROLTYPE_GET_INPUTACTIVATION</td>
+        <td>输入信号触发沿：0x00->&gt;上升沿, 0x01->&gt;下降沿</td>
+      </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_INPUTACTIVATION</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_DEBOUNCERTIME</td>
+   <td>消抖时间, [0, 20000]微秒</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_DEBOUNCERTIME</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_TRIGGERSOURCE</td>
+   <td>触发源：0x00->&gt;光耦隔离输入<br/>
+                                0x01->&gt; GPIO0<br/>
+                                0x02->&gt; GPIO1<br/>
+                                0x03->&gt; 计数器分频模式<br/>
+                                0x04->&gt; 脉冲模式(PWM)<br/>
+                                0x05->&gt; 软件</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_TRIGGERSOURCE</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_TRIGGERDELAY</td>
+   <td>触发延迟时间, [0, 5000000]微秒</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_TRIGGERDELAY</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_BURSTCOUNTER</td>
+   <td>突发计数：1, 2, 3 ... 1023</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_BURSTCOUNTER</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_COUNTERSOURCE</td>
+   <td>计数器模式信号源：<br/>0x00->&gt; 光耦隔离输入<br/>0x01->&gt; GPIO0<br/>0x02->&gt; GPIO1</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_COUNTERSOURCE</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_COUNTERVALUE</td>
+   <td>计数值：1, 2, 3 ... 1023</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_COUNTERVALUE</td>
+   <td>&nbsp;</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_RESETCOUNTER</td>
+   <td>计数器复位</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_PWMSOURCE</td>
+   <td>脉冲模式信号源：<br/>0x00->&gt; 光耦隔离输入<br/>
+								0x01->&gt; GPIO0<br/>
+								0x02->&gt; GPIO1</td>
+ </tr>
+  <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_PWMSOURCE</td>
+   <td>&nbsp;</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_OUTPUTMODE</td>
+   <td>输出模式：<br/>0x00->&gt; 触发等待信号<br/>
+                                0x01->&gt; 曝光有效信号<br/>
+                                0x02->&gt; 闪光灯信号<br/>
+                                0x03->&gt; 用户输出信号</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_OUTPUTMODE</td>
+   <td>&nbsp;</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_STROBEDELAYMODE</td>
+   <td>闪光灯信号延迟模式, 0->&gt; 预输出, 1->&gt; 延迟输出; compared to exposure active signal</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_STROBEDELAYMODE</td>
+   <td>&nbsp;</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_STROBEDELAYTIME</td>
+   <td>闪光灯信号延迟时间, [0, 5000000]微秒</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_STROBEDELAYTIME</td>
+   <td>&nbsp;</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_STROBEDURATION</td>
+   <td>闪光灯脉冲宽度, [0, 5000000]微秒</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_STROBEDURATION</td>
+   <td>&nbsp;</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_GET_USERVALUE</td>
+   <td>用户输出数值：bit0->&gt; 光耦隔离输出<br/>
+                                bit1->&gt; GPIO0输出<br/>
+                                bit2->&gt; GPIO1输出</td>
+ </tr>
+ <tr>
+   <td>NNCAM_IOCONTROLTYPE_SET_USERVALUE</td>
+   <td>&nbsp;</td>
+ </tr>
+    </table>
+  </div>
+  </blockquote>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_ExpoCallback</font></h2>
+  <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+  <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>PINNCAM_EXPOSURE_CALLBACK fnExpoProc, void* pExpoCtx：曝光回调函数以及回调上下文.设置fnExpoProc为NULL，表示停止回调.</p>
+  </blockquote>
+  <p><strong>说明：</strong>一旦设置了非NULL的回调函数，每当曝光时间变化时，回调发生.设置fnExpoProc为NULL，表示不再回调.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_ChromeCallback</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>PINNCAM_CHROME_CALLBACK fnChromeProc, void* pChromeCtx：多色/单色切换回调函数以及回调上下文.设置fnChromeProc为NULL，表示不再回调.</p>
+  </blockquote>
+  <p><strong>说明：</strong>一旦设置了非NULL的回调函数，每当单色/多色切换时（如调用Nncam_put_Chrome），回调发生.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_LevelRangeAuto</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong>HNnCam h：相机实例句柄</p>
+    <p><strong>说明：</strong>自动LevelRange</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_put_LevelRange, Nncam_get_LevelRange</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>unsigned short aLow[4], unsigned short aHigh[4]: R, G, B和灰度的Level Range. RGB只对彩色图像有效, 灰度只对灰度图像有效.</p>
+  </blockquote>
+  <p><strong>说明：</strong>LevelRange相关.</p>
+</li></ul>
+<ul><li><h2><font color="#0000FF">Nncam_GetHistogram</font></h2>
+    <p><strong>返回值：</strong>HRESULT类型表示成功失败</p>
+    <p><strong>参数：</strong></p>
+  <blockquote>
+    <p>HNnCam h：相机实例句柄</p>
+    <p>PINNCAM_HISTOGRAM_CALLBACK fnHistogramProc, void* pHistogramCtx：直方图数据的回调函数以及回调上下文</p>
+  </blockquote>
+  <p><strong>说明：</strong>获取直方图数据</p>
+</li></ul>
+<hr/>
+<h1><font color="#0000FF"><a id="dotnet">5. .NET, C#和VB.NET</a></font></h1>
+<hr/>
+<p>Nncam支持.NET开发环境(C#和VB.NET).</p>
+<p>nncam.cs使用P/Invoke调用至nncam.dll. 把nncam.cs拷贝到你的C#工程中使用，请参考例子代码demowinformcs1, demowinformcs2和demowinformcs3.</p>
+<p>请主意<strong>Nn.NnCam C#包装类的实例通过静态方法Open或者OpenByIndex得到，而不是通常的obj = new Nn.NnCam</strong>(构造函数特意是私有的).</p>
+<p>绝大多数NnCam类的方法和属性都P/Invoke调用至nncam.dll/so中对应的原生C/C++ Nncam_xxx函数. 所以，关于Nncam_xxx的文档说明都适用于C#中对应的属性或方法，比如，C#中的Snap方法调用Nncam_Snap函数，关于Nncam_Snap函数的说明同样适用于C# NnCam类的Snap方法：</p>
+<table width="100%" border="0" bgcolor="#B0D0B0">
+<tr><td><pre>[DllImport(&quot;nncam.dll&quot;, ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
+private static extern int Nncam_Snap(SafeHNnCamHandle h, uint nResolutionIndex);
+
+public bool Snap(uint nResolutionIndex)
+{
+    if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
+        return false;
+    return (Nncam_Snap(_handle, nResolutionIndex) &gt;= 0);
+}</pre></td></tr></table>
+<p>VB.NET和C#是类似的，不另说明.</p>
+<hr/>
+<h1><font color="#0000FF"><a id="python">6. Python</a></font></h1>
+<hr/>
+<p>Nncam支持Python(版本3.0及以上)开发，请import nncam导入nncam.py，参考例子代码simplest.py和qt.py.</p>
+<p>请注意<strong>nncam.NnCam python包装类的实例通过类方法(classmethod)Open或者OpenByIndex得到，而不是通常的obj = nncam.NnCam()</strong>.</p>
+<p>绝大多数NnCam类的方法都通过ctypes调用至nncam.dll/so/dylib中对应的原生C/C++ Nncam_xxx函数. 所以，关于Nncam_xxx的文档说明都适用于python中的对应方法.</p>
+<p>参见nncam.py中的__errcheck，原始的HRESULT返回值被映射成HRESULTException异常(win32平台从OSError继承).</p>
+<p>nncam dll/so/dylib库文件请和nncam.py存放在同一目录.</p>
+<h1><font color="#0000FF"><a id="java">7. Java</a></font></h1>
+<hr/>
+<p>Nncam支持Java开发. nncam.java使用<a href="https://github.com/java-native-access/jna">JNA (https://github.com/java-native-access/jna)</a>调用至nncam.dll/so/dylib. 把nncam.java拷贝到你的JAVA工程中使用，请参考例子代码simplest.java(控制台程序), javafx.java, swing.java.</p>
+<p>请注意<strong>nncam java包装类的实例通过静态方法Open或者OpenByIndex得到，而不是通常的obj = new nncam()</strong>(构造函数特意是私有的).</p>
+<p>绝大多数nncam类的方法都通过<a href="https://github.com/java-native-access/jna">JNA</a>调用至nncam.dll/so/dylib中对应的原生C/C++ Nncam_xxx函数. 所以，关于Nncam_xxx的文档说明都适用于java中的对应方法.</p>
+<p>参见nncam.java中的errcheck，原始的HRESULT返回值被映射成HRESULTException异常.</p>
+<p>提醒: (1)从github下载jna-*.jar并加入依赖库; (2)nncam.dll/so/dylib放在合适目录</p>
+<hr/>
+<h1><font color="#0000FF">8. 其他</font></h1>
+<hr/>
+<ul><li>字节序(BGR vs RGB)
+    <blockquote>
+      <p>Windows: BGR</p>
+      <p>macOS, Linux, Android: RGB</p>
+    </blockquote>
+</li></ul>
+<ul>
+  <li>一些参数的范围以及默认值</li>
+</ul>
+<blockquote>
+  <div align="center">
+    <table width="100%" border="1" cellpadding="0" cellspacing="0" bgcolor="#B0D0B0">
+      <tr>
+        <td colspan="3">参数</td>
+        <td width="15%">范围</td>
+        <td width="9%">默认值</td>
+        <td width="19%">获取</td>
+        <td width="17%">设置</td>
+        <td width="15%">自动</td>
+      </tr>
+      <tr>
+        <td colspan="3">AutoExpoTarget<br/>(自动曝光目标亮度)</td>
+        <td width="15%">16~235</td>
+        <td width="9%">120</td>
+        <td width="19%">Nncam_get_AutoExpoTarget</td>
+        <td width="17%">Nncam_put_AutoExpoTarget</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td width="13%" rowspan="5">白平衡</td>
+        <td width="10%" rowspan="2">Temp/Tint模式</td>
+        <td width="8%">Temp(色温)</td>
+        <td width="15%">2000~15000</td>
+        <td width="9%">6503</td>
+        <td width="19%" rowspan="2">Nncam_get_TempTint</td>
+        <td width="17%" rowspan="2">Nncam_put_TempTint</td>
+        <td width="15%" rowspan="2">Nncam_AwbOnePush</td>
+      </tr>
+      <tr>
+        <td width="8%">Tint</td>
+        <td width="15%">200~2500</td>
+        <td width="9%">1000</td>
+      </tr>
+      <tr>
+        <td rowspan="3">RGB Gain模式 </td>
+        <td height="21">Red Gain</td>
+        <td rowspan="3">-127~127</td>
+        <td rowspan="3">0</td>
+        <td rowspan="3">Nncam_get_WhiteBalanceGain</td>
+        <td rowspan="3">Nncam_put_WhiteBalanceGain</td>
+        <td rowspan="3">Nncam_AwbInit</td>
+      </tr>
+      <tr>
+        <td>Green Gain</td>
+      </tr>
+      <tr>
+        <td>Blue  Gain</td>
+      </tr>
+      <tr>
+        <td colspan="3">LevelRange</td>
+        <td width="15%">0~255</td>
+        <td width="9%">Low = 0<br/>
+        High = 255</td>
+        <td width="19%">Nncam_get_LevelRange</td>
+        <td width="17%">Nncam_put_LevelRange</td>
+        <td width="15%">Nncam_LevelRangeAuto</td>
+      </tr>
+      <tr>
+        <td colspan="3">Contrast(对比度)</td>
+        <td width="15%">-100~100</td>
+        <td width="9%">0</td>
+        <td width="19%">Nncam_get_Contrast</td>
+        <td width="17%">Nncam_put_Contrast</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="3">Hue(色度)</td>
+        <td width="15%">-180~180</td>
+        <td width="9%">0</td>
+        <td width="19%">Nncam_get_Hue</td>
+        <td width="17%">Nncam_put_Hue</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="3">Saturation(饱和度)</td>
+        <td width="15%">0~255</td>
+        <td width="9%">128</td>
+        <td width="19%">Nncam_get_Saturation</td>
+        <td width="17%">Nncam_put_Saturation</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="3">Brightness(亮度)</td>
+        <td width="15%">-64~64</td>
+        <td width="9%">0</td>
+        <td width="19%">Nncam_get_Brightness</td>
+        <td width="17%">Nncam_put_Brightness</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="3">Gamma</td>
+        <td width="15%">20~180</td>
+        <td width="9%">100</td>
+        <td width="19%">Nncam_get_Gamma</td>
+        <td width="17%">Nncam_put_Gamma</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="3">Black Level(暗电平)</td>
+        <td width="15%">0~31 (位深度=8)<br/>
+        	0~31 * 4 (位深度=10)<br/>
+        	0~31 * 16 (位深度=12)<br/>
+        	0~31 * 64 (位深度=14)<br/>
+        	0~31 * 256 (位深度=16)</td>
+        <td width="9%">&nbsp;</td>
+        <td width="19%">Nncam_get_Option</td>
+        <td width="17%">Nncam_put_Option</td>
+        <td width="15%">&nbsp;</td>
+      </tr>
+   <tr>
+    <td width="14%" rowspan="4">Auto Exposure<br/>(自动曝光)</td>
+    <td width="9%" rowspan="2">Max(最大)</td>
+    <td width="10%">Exposure Time<br/>(曝光时间)</td>
+    <td width="15%">&nbsp;</td>
+    <td width="8%">350ms</td>
+    <td width="17%" rowspan="2">Nncam_get_MaxAutoExpoTimeAGain</td>
+    <td width="17%" rowspan="2">Nncam_put_MaxAutoExpoTimeAGain</td>
+    <td width="14%" rowspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td width="10%">Analog Gain<br/>(模拟增益)</td>
+    <td width="15%">&nbsp;</td>
+    <td width="8%">500</td>
+    </tr>
+  <tr>
+    <td rowspan="2">Min(最小)</td>
+    <td>Exposure Time<br/>(曝光时间)</td>
+    <td>&nbsp;</td>
+    <td>0</td>
+    <td rowspan="2">Nncam_get_MinAutoExpoTimeAGain</td>
+    <td rowspan="2">Nncam_put_MinAutoExpoTimeAGain</td>
+    <td rowspan="2">&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Analog Gain<br/>(模拟增益)</td>
+	<td>&nbsp;</td>
+	<td>100</td>
+    </tr>
+    </table>
+  </div>
+</blockquote>
+<hr/>
+<h1><font color="#0000ff">7. 更新历史</font></h1>
+<hr/>
+<p>v37: 增加Android支持<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加Nncam_StartPushModeV3 (Nncam_StartPushModeV2和Nncam_StartPushMode过时)</p>
+<p>v36: 增加Java支持. 请参阅<a href="#java">这里</a></p>
+<p>v35: 增加Python支持. 请参阅<a href="#python">这里</a></p>
+<p>v34: 自动对焦和对焦马达</p>
+<p>v33: 扩充NNCAM_OPTION_AGAIN至NNCAM_OPTION_AUTOEXP_POLICY，支持更多选项. 请参阅<a href="#aepolicy">这里</a></p>
+<p>v32: 增加支持Windows 10 on ARM和ARM64，包括Desktop和WinRT</p>
+<p>v31: 增加Nncam_deBayerV2，支持RGB48和RGB64</p>
+<p>v30: 增加NNCAM_FLAG_CGHDR</p>
+<p>v29: 增加NncamFrameInfoV2以及PullImageV2和StartPushModeV2一组函数，一些相机支持帧序号和帧时间戳. 请参阅<a href="#infov2">这里</a></p>
+<p>v28: 增加Nncam_read_Pipe/Nncam_write_Pipe/Nncam_feed_Pipe</p>
+<p>v27: 增加Nncam_SnapN, 静态抓拍支持多张图片, 请参阅<a href="#snapn">这里</a>和decmpcpp</p>
+<p>v26: 增加恢复出厂设置, NNCAM_OPTION_FACTORY</p>
+<p>v25: 增加锐化, NNCAM_OPTION_SHARPENING</p>
+<p>v24: 增加50/60HZ约束下的自动曝光</p>
+<p>v23: 增加Linux armhf、armel和arm64的支持<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加FFC和DFC, 请参阅<a href="#ffc">这里</a>和<a href="#dfc">这里</a></p>
+<p>v22: 增加NNCAM_OPTION_DDR_DEPTH, 请参阅<a href="#ddrdepth">这里</a></p>
+<p>v21: 增加Nncam_IoControl</p>
+<p>v20: 增加Nncam_EnumV2, NncamModelV2, NncamInstV2; (Nncam_Enum, NncamModel和NncamInst过时)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加Pixel Format，见NNCAM_OPTION_PIXEL_FORMAT; (NNCAM_OPTION_BITDEPTH的超集)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;增加平场校正(Flat Field Correction)</p>
+<p>v19: 增加黑平衡: 请参阅<a href="#black">这里</a></p>
+<p>v18: 增加Nncam_get_Revision</p>
+<p>v17: 增加<a href="#rotate">NNCAM_OPTION_ROTATE</a></p>
+<p>v16: 增加<a href="#ddr">NNCAM_FLAG_DDR</a>, 使用超大容量DDR(Double Data Rate SDRAM)作帧缓冲</p>
+<p>v15: 增加<a href="#binning">NNCAM_OPTION_BINNING</a></p>
+<p>v14: 增加对WinRT / UWP (Universal Windows Platform) / Windows Store App的支持</p>
+<p>v13: 支持行间隔(Row Pitch, Stride), 请参阅<a href="#rowpitch1">Nncam_PullImageWithRowPitch</a>和<a href="#rowpitch2">Nncam_PullStillImageWithRowPitch</a></p>
+<p>v12: 支持RGB32, 8位灰度，16位灰度, 请参阅<a href="#rgb">这里</a></p>
+<p>v11: 暗电平(Black Level)，请参阅<a href="#blacklevel">这里</a></p>
+<p>v10: Demosaic算法，请参阅<a href="#demosaic">这里</a></p>
+<p>v9: 直方图数据类型从double改成float</p>
+<p>v8: 支持模拟触发模式, 请参阅<a href="#trigger">这里</a></p>
+<p>v7: 位深度>8时支持RGB48输出, 请参阅<a href="#rgb">这里</a></p>
+<p>v6: 支持触发(Trigger)模式, 请参阅<a href="#trigger">这里</a></p>
+<p>v5: 白平衡的两种模式: Temp/Tint模式 vs RGB Gain模式, 请参阅<a href="#wb">这里</a></p>
+<p>v4: 支持ROI (Region Of Interest), 请参阅<a href="#roi">这里</a></p>
+<p>v3: 支持更多的位深度(bit depth): 10bits, 12bits, 14bits, 16bits</p>
+<p>v2: 支持RAW模式，请参阅<a href="#raw">这里</a>和<a href="#rawo">这里</a>；增加对Linux和macOS的支持</p>
+<p>v1: 初始发布</p>
+<hr/>
+<h1><font color="#0000FF">8. 联系信息</font></h1>
+<hr/>
+<p>如果在使用NnCam SDK的过程中，碰到任何问题，请与我们联系<br/>
+  网站：<a href="http://www.nn.com">www.nn.com</a><br/>
+  EMAIL：support@nn.com</p>
+</body>
+</html>

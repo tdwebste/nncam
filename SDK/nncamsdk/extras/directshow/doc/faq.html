@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252"/>
+<title>FAQ for nncam directshow sdk</title>
+</head>
+
+<body>
+<h1 align="center">FAQ for nncam directshow sdk</h1>
+<p>NOTICE: This Q&amp;A below is only for directshow sdk.</p>
+<h2>Q: What's the version of this sdk?</h2>
+<p align="left">A: 1.0.14643.20190511</p>
+<h2>Q: What's in nncam directshow sdk?</h2>
+<p align="left">A: For normal directshow application development, pure directshow programming is sufficient. For advanced directshow application development (such as camera control GUI customization), COM interfaces in nncam_dshow.h are available. A  how-to-use C++ source code sample demodshow.zip is shipped within nncamsdk.zip as well. There is also a sample program source code amcap.zip  (provided by Microsoft) in the samples directory.</p>
+<h2>Q: The nncam camera gets found on device enumeration even when it is not connected to PC. If the camera is not connected it should not be enumerated. Is this a bug?</h2>
+<p align="left">A: No, this is not a bug, it is inherent. If you want to avoid this, you may use the native C API.</p>
+<h2>Q: The media type of the output pin is always RGB24 even the bitdepth is greater than 8 or for mono cameras. Is this a bug?</h2>
+<p align="left">A: No, this is not a bug, it is by design. The output media subtype is always MEDIASUBTYPE_RGB24 even the bitdepth is greater than 8 or for mono cameras. After all, there is not MEDIASUBTYPE_RGB48 in directshow.</p>
+<h2>Q: How about the samples?</h2>
+<p align="left">A: 1. demodshow: everything about directshow is in dshow.h and dshow.cpp. This sample uses mfc for the UI.</p>
+<p>2. amcap: a sample comes from Microsoft.</p>
+<h2>Q: Where can I find the learning materials about DirectShow?</h2>
+<p align="left">A: Microsoft's MSDN is the most complete reference of DirectShow. You can access it at <a href="http://msdn.microsoft.com/en-us/library/dd375454%28v=VS.85%29.aspx">http://msdn.microsoft.com/en-us/library/dd375454%28v=VS.85%29.aspx</a><u> </u></p>
+<h2>Q: Which interfaces does nncam support?</h2>
+<table border="1" cellspacing="0" cellpadding="0" width="100%">
+  <tr>
+    <td width="26%">Filter interfaces</td>
+    <td width="73%" valign="top">IBaseFilter<br/>
+      ISpecifyPropertyPages<br/>
+      IAMFilterMiscFlags<br/>
+      IAMVideoControl (Still capture capable models)<br/>
+      IAMVideoProcAmp<br/>
+      IVideoProcAmp<br/>
+      ICameraControl<br/>
+      IAMCameraControl<br/>
+      INncam (see nncam_dshow.h)<br/>
+      INncamSerialNumber<br/>
+      INncamStillImage (Still capture capable models)<br/>
+      INncamSerialNumber<br/>
+      INncamVersion<br/>
+      INncamST4</td>
+  </tr>
+  <tr>
+    <td width="26%">Output pin interfaces<br/>
+      Preview or Still</td>
+    <td width="73%" valign="top">IPin<br/>
+      IQualityControl<br/>
+      IAMStreamConfig<br/>
+      IKsPropertySet<br/>
+      ISpecifyPropertyPages<br/>
+      IAMVideoProcAmp<br/>
+      IVideoProcAmp<br/>
+      ICameraControl<br/>
+      IAMCameraControl<br/>
+      INncam (see nncam_dshow.h)<br/>
+      INncamSerialNumber<br/>
+      INncamStillImage (Still capture capable models)<br/>
+      INncamSerialNumber<br/>
+      INncamVersion<br/>
+      INncamST4</td>
+  </tr>
+  <tr>
+    <td width="26%">Output Pin Media Types</td>
+    <td width="73%" valign="top">MEDIATYPE_Video (always RGB24)<br/>
+      MEDIASUBTYPE_NULL<br/>
+      FORMAT_VideoInfo</td>
+  </tr>
+</table>
+<h2>Q: What are the valid ranges of parameters?</h2>
+<p>A: </p>
+<table border="1" cellspacing="0" cellpadding="0" width="100%">
+  <tr>
+    <td width="14%">Category</td>
+    <td width="31%">Functions</td>
+    <td width="37%">Range or function to get the range</td>
+    <td width="16%">Default</td>
+  </tr>
+  <tr>
+    <td width="14%">Video Resolution</td>
+    <td width="31%">put_Size<br/>
+      get_Size<br/>
+      put_eSize<br/>
+      get_eSize</td>
+    <td width="37%">get_ResolutionNumber<br/>
+      get_Resolution</td>
+    <td width="16%">model specific</td>
+  </tr>
+  <tr>
+    <td width="14%" rowspan="4">Exposure</td>
+    <td width="31%">get_AutoExpoTarget<br/>
+      put_AutoExpoTarget</td>
+    <td width="37%">10~230</td>
+    <td width="16%">120</td>
+  </tr>
+  <tr>
+    <td width="31%">get_AutoExpoEnable<br/>
+    put_AutoExpoEnable</td>
+    <td width="37%">TRUE or FALSE</td>
+    <td width="16%">TRUE</td>
+  </tr>
+  <tr>
+    <td width="31%">get_ExpoTime<br/>
+      put_ExpoTime</td>
+    <td width="37%">get_ExpTimeRange</td>
+    <td width="16%">model specific</td>
+  </tr>
+  <tr>
+    <td width="31%">get_ExpoAGain<br/>
+      put_ExpoAGain</td>
+    <td width="37%">get_ExpoAGainRange</td>
+    <td width="16%">model specific</td>
+  </tr>
+  <tr>
+    <td width="14%">White Balance</td>
+    <td width="31%">get_TempTint<br/>
+      put_TempTint</td>
+    <td width="37%">Temp: 2000~15000<br/>
+      Tint: 200~2500</td>
+    <td width="16%">Temp = 6503<br/>
+      Tint = 1000</td>
+  </tr>
+  <tr>
+    <td width="14%" rowspan="7">Color</td>
+    <td width="31%">get_Hue<br/>
+      put_Hue</td>
+    <td width="37%">-180~180</td>
+    <td width="16%">0</td>
+  </tr>
+  <tr>
+    <td width="31%">get_Saturation<br/>
+      put_Saturation</td>
+    <td width="37%">0~255</td>
+    <td width="16%">128</td>
+  </tr>
+  <tr>
+    <td width="31%">get_Brightness<br/>
+      put_Brightness</td>
+    <td width="37%">-64~64</td>
+    <td width="16%">0</td>
+  </tr>
+  <tr>
+    <td width="31%">get_Contrast<br/>
+      put_Contrast</td>
+    <td width="37%">-100~100</td>
+    <td width="16%">0</td>
+  </tr>
+  <tr>
+    <td width="31%">get_Gamma<br/>
+      put_Gamma</td>
+    <td width="37%">20~180</td>
+    <td width="16%">100</td>
+  </tr>
+  <tr>
+    <td width="31%">get_LevelRange<br/>
+      put_LevelRange</td>
+    <td width="37%">0~255</td>
+    <td width="16%">Low = 0<br/>
+      High = 255</td>
+  </tr>
+  <tr>
+    <td width="31%">get_MonoMode</td>
+    <td width="37%">S_OK: mono mode<br/>
+      S_FALSE: color mode</td>
+    <td width="16%">model specific</td>
+  </tr>
+  <tr>
+    <td width="14%" rowspan="3">Vignetting</td>
+    <td width="31%">get_VignetEnable<br/>
+      put_VignetEnable</td>
+    <td width="37%">TRUE or FALSE</td>
+    <td width="16%">FALSE</td>
+  </tr>
+  <tr>
+    <td width="31%">get_VignetMidPointInt<br/>
+      put_VignetMidPointInt</td>
+    <td width="37%">0~100</td>
+    <td width="16%">50</td>
+  </tr>
+  <tr>
+    <td width="31%">get_VignetAmountInt<br/>
+      put_VignetAmountInt</td>
+    <td width="37%">-100~100</td>
+    <td width="16%">0</td>
+  </tr>
+  <tr>
+    <td width="14%" rowspan="4">Misc</td>
+    <td width="31%">get_VFlip<br/>
+      put_VFlip</td>
+    <td width="37%">TRUE or FALSE</td>
+    <td width="16%">FALSE</td>
+  </tr>
+  <tr>
+    <td width="31%">get_HZ<br/>
+      put_HZ</td>
+    <td width="37%">enum: 0, 1, 2<br/>
+      0 -&gt; 60HZ AC<br/>
+      1 -&gt; 50Hz AC<br/>
+      2 -&gt; DC</td>
+    <td width="16%">DC</td>
+  </tr>
+  <tr>
+    <td width="31%">get_Chrome<br/>
+      put_Chrome</td>
+    <td width="37%">TRUE or FALSE</td>
+    <td width="16%">FALSE</td>
+  </tr>
+  <tr>
+    <td width="31%">get_Speed<br/>
+      put_Speed</td>
+    <td width="37%">get_MaxSpeed</td>
+    <td width="16%">model specific</td>
+  </tr>
+  <tr>
+    <td width="14%">Still Image</td>
+    <td width="31%">put_StillSize<br/>
+      get_StillSize<br/>
+      put_eStillSize<br/>
+      get_eStillSize</td>
+    <td width="37%">get_StillResolutionNumber<br/>
+      get_StillResolution</td>
+    <td width="16%">model specific</td>
+  </tr>
+</table>
+<p align="left">NOTE: Exposure time unit is microsecond.</p>
+<h2>Q: How to know whether the  camera supports still capture via SDK?</h2>
+<p align="left">A: Query the INncamStillImage interface.</p>
+<h2>Q: How to get the actual frame rate with this SDK?</h2>
+<p align="left">A: Code example can be found in TDshowContext::get_framerate function in dshow.h and dshow.cpp of the demodshow sample project.</p>
+<h2>Q: How to get the camera's unique id?</h2>
+<p>A: Use the INncamSerialNumber interface. Code example can be found in the demodshow sample project.</p>
+<h2>Q: Can this SDK used with .net applications?</h2>
+<p align="left">A: Yes, of course. This SDK is DirectShow based and can be easily integrated into your .net applications. See <a href="http://directshownet.sourceforge.net/">http://directshownet.sourceforge.net/</a> for more details.</p>
+<h2>Q: How to use the ROI?</h2>
+<p align="left">There are two cases according to that the camera filter is connected or not connected.<br/>
+(1) Before the camera filter is connected: firstly, use put_eSize or put_Size to set the resolution, then use put_Roi to set the ROI.<br/>
+(2) After the camera filter is connected: call put_Roi to set the offset can be supported. The width and height can NOT be changed.<br/>
+<br/>DShow ROI is supported since 20180824.</p>
+<h2>Q: Does directshow sdk support multiple camera instance?</h2>
+<p align="left">A: Yes, but it's something tricky. The nncam.ax generally open the "first" camera connected to the computer. If you want open multiple instance simultaneously, we advise you to use the native API. If you truely want to open multiple instance simultaneously in directshow, please use DshowEnumCamera and DshowOpenCamera which are defined as below:<br/></p>
+<table width="100%" border="0" bgcolor="#B0D0B0">
+<tr><td>
+	/* return value: the number of connected camera */<br/>
+    unsigned __stdcall DshowEnumCamera();<br/><br/>
+    /* return value: the camera directshow COM object, which can be used to QueryInterface(IID_IBaseFilter, ...). When failed, NULL is returned */<br/>
+    /* use DshowOpenCamera(0) to open the first camera, use DshowOpenCamera(1) to open the second camera, etc */<br/>
+    IUnknown* __stdcall DshowOpenCamera(unsigned index);<br/>
+</td></tr>
+</table><br/>
+Please see USE_DSHOWOPENCAMERA in files dshow.h and dshow.cpp of the demodshow sample project. Use InitNncamAx() to get the function pointers.<br/>
+<table width="100%" border="0" bgcolor="#B0D0B0">
+<tr><td><pre>
+typedef unsigned  (__stdcall *PFUN_DSHOWENUMCAMERA)();
+typedef const wchar_t* (__stdcall *PFUN_DSHOWGETMODELNAME)(unsigned index);
+typedef IUnknown* (__stdcall *PFUN_DSHOWOPENCAMERA)(unsigned index);
+PFUN_DSHOWENUMCAMERA g_pDshowEnumCamera = NULL;
+PFUN_DSHOWGETMODELNAME g_pDshowGetModelName = NULL;
+PFUN_DSHOWOPENCAMERA g_pDshowOpenCamera = NULL;
+HMODULE g_hModuleNncamAx = NULL;
+
+void InitNncamAx()
+{
+    if (g_hModuleNncamAx)
+        return;
+		
+    HKEY hKey = NULL;
+    /* {EA6387A5-60C7-41D3-B058-8D90580A7BE1} is the clsid of nncam dshow object */
+    if (ERROR_SUCCESS == RegOpenKeyExW(HKEY_CLASSES_ROOT, L"CLSID\\{EA6387A5-60C7-41D3-B058-8D90580A7BE1}\\InprocServer32", 0, KEY_READ, &amp;hKey))
+    {
+        wchar_t axPath[MAX_PATH + 1] = { 0 };
+        DWORD cbData = MAX_PATH * sizeof(wchar_t);
+        if (ERROR_SUCCESS == RegQueryValueExW(hKey, NULL, NULL, NULL, (PBYTE)axPath, &amp;cbData)) /* query the full path of nncam.ax */
+        {
+            g_hModuleNncamAx = LoadLibraryW(axPath);
+            if (g_hModuleNncamAx)
+            {
+                g_pDshowEnumCamera = (PFUN_DSHOWENUMCAMERA)GetProcAddress(g_hModuleNncamAx, "DshowEnumCamera");
+                g_pDshowGetModelName = (PFUN_DSHOWGETMODELNAME)GetProcAddress(g_hModuleNncamAx, "DshowGetModelName");
+                g_pDshowOpenCamera = (PFUN_DSHOWOPENCAMERA)GetProcAddress(g_hModuleNncamAx, "DshowOpenCamera");
+            }
+        }
+        RegCloseKey(hKey);
+    }
+}</pre></td></tr>
+</table><br/>
+After you get the the function pointers, you can use them to open the cameras, such as: g_pDshowEnumCamera(0), g_pDshowEnumCamera(1), g_pDshowEnumCamera(2), etc.
+</body>
+</html>
