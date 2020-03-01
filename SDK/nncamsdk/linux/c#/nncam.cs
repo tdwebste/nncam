@@ -8,9 +8,9 @@ using System.Runtime.ConstrainedExecution;
 
 /*
     Versin: 37.14643.2019.0511
-    
+
     For .Net core or Mono at Linux platform, see: https://dotnet.github.io/, http://www.mono-project.com/
-    
+
     We use P/Invoke to call into the libnncam.so API, the c# class NnCam is a thin wrapper class to the native api of libnncam.so.
     So the manual en.html(English) and hans.html(Simplified Chinese) are also applicable for programming with nncam.cs.
     See them in the 'doc' directory:
@@ -114,7 +114,7 @@ namespace Nn
             FLAG_GLOBALSHUTTER       = 0x0000001000000000,  /* global shutter */
             FLAG_FOCUSMOTOR          = 0x0000002000000000   /* support focus motor */
         };
-        
+
         public enum eEVENT : uint
         {
             EVENT_EXPOSURE           = 0x0001, /* exposure time changed */
@@ -248,13 +248,13 @@ namespace Nn
             PIXELFORMAT_GMCY12      = 0x0a,
             PIXELFORMAT_UYVY        = 0x0b
         };
-        
+
         public enum eFRAMEINFO_FLAG : uint
         {
             FRAMEINFO_FLAG_SEQ       = 0x01, /* sequence number */
             FRAMEINFO_FLAG_TIMESTAMP = 0x02
         };
-        
+
         public enum eIoControType : uint
         {
             IOCONTROLTYPE_GET_SUPPORTEDMODE         = 0x01, /* 0x01->Input, 0x02->Output, (0x01 | 0x02)->support both Input and Output */
@@ -319,11 +319,11 @@ namespace Nn
                                                             */
             IOCONTROLTYPE_SET_USERVALUE             = 0x28
         };
-        
+
         public const int TEC_TARGET_MIN = -300;
         public const int TEC_TARGET_DEF = -100;
         public const int TEC_TARGET_MAX = 300;
-        
+
         public struct Resolution
         {
             public uint width;
@@ -385,7 +385,7 @@ namespace Nn
             public string id; /* unique and opaque id of a connected camera */
             public Model model;
         };
- 
+
         public delegate void DelegateEventCallback(eEVENT nEvent);
         public delegate void DelegateDataCallbackV3(IntPtr pData, ref FrameInfoV2 info, bool bSnap);
         public delegate void DelegateHistogramCallback(float[] aHistY, float[] aHistR, float[] aHistG, float[] aHistB);
@@ -396,7 +396,7 @@ namespace Nn
         internal delegate void PINNCAM_HISTOGRAM_CALLBACK(IntPtr aHistY, IntPtr aHistR, IntPtr aHistG, IntPtr aHistB, IntPtr pCtx);
         [UnmanagedFunctionPointerAttribute(CallingConvention.Cdecl)]
         internal delegate void PNNCAM_EVENT_CALLBACK(eEVENT nEvent, IntPtr pCtx);
-        
+
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT
         {
@@ -439,14 +439,14 @@ namespace Nn
         private static extern int Nncam_Stop(SafeCamHandle h);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_Pause(SafeCamHandle h, int bPause);
-        
+
         /* for still image snap */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_Snap(SafeCamHandle h, uint nResolutionIndex);
         /* multiple still image snap */
         [DllImport("nncam.dll", ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
         private static extern int Nncam_SnapN(SafeCamHandle h, uint nResolutionIndex, uint nNumber);
-        
+
         /*
             soft trigger:
             nNumber:    0xffff:     trigger continuously
@@ -455,7 +455,7 @@ namespace Nn
         */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_Trigger(SafeCamHandle h, ushort nNumber);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_Size(SafeCamHandle h, int nWidth, int nHeight);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
@@ -472,7 +472,7 @@ namespace Nn
         private static extern uint Nncam_get_ResolutionRatio(SafeCamHandle h, uint nResolutionIndex, out int pNumerator, out int pDenominator);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern uint Nncam_get_Field(SafeCamHandle h);
-        
+
         /*
             FourCC:
                 MAKEFOURCC('G', 'B', 'R', 'G')
@@ -484,7 +484,7 @@ namespace Nn
         */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern uint Nncam_get_RawFormat(SafeCamHandle h, out uint nFourCC, out uint bitdepth);
-        
+
         /*
             set or get the process mode: NNCAM_PROCESSMODE_FULL or NNCAM_PROCESSMODE_FAST
         */
@@ -498,7 +498,7 @@ namespace Nn
         private static extern int Nncam_get_RealTime(SafeCamHandle h, out int bEnable);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_Flush(SafeCamHandle h);
-        
+
         /* sensor Temperature */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_Temperature(SafeCamHandle h, out short pTemperature);
@@ -510,7 +510,7 @@ namespace Nn
         private static extern int Nncam_get_Roi(SafeCamHandle h, out uint pxOffset, out uint pyOffset, out uint pxWidth, out uint pyHeight);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_Roi(SafeCamHandle h, uint xOffset, uint yOffset, uint xWidth, uint yHeight);
-         
+
         /*
             ------------------------------------------------------------------|
             | Parameter               |   Range       |   Default             |
@@ -543,7 +543,7 @@ namespace Nn
         private static extern int Nncam_put_MinAutoExpoTimeAGain(SafeCamHandle h, uint minTime, ushort minAGain);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_MinAutoExpoTimeAGain(SafeCamHandle h, out uint minTime, out ushort minAGain);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_ExpoTime(SafeCamHandle h, out uint Time)/* in microseconds */;
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
@@ -602,7 +602,7 @@ namespace Nn
         private static extern int Nncam_get_Negative(SafeCamHandle h, out int bNegative);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_Negative(SafeCamHandle h, int bNegative);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_Speed(SafeCamHandle h, ushort nSpeed);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
@@ -612,11 +612,11 @@ namespace Nn
 
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern uint Nncam_get_MaxBitDepth(SafeCamHandle h);/* get the max bit depth of this camera, such as 8, 10, 12, 14, 16 */
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern uint Nncam_get_FanMaxSpeed(SafeCamHandle h);/* get the maximum fan speed, the fan speed range = [0, max], closed interval */
-        
-        /* power supply: 
+
+        /* power supply:
                 0 -> 60HZ AC
                 1 -> 50Hz AC
                 2 -> DC
@@ -677,13 +677,13 @@ namespace Nn
         */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_Revision(SafeCamHandle h, out ushort pRevision);
-        
+
         /*
             get the serial number which is always 32 chars which is zero-terminated such as "TP110826145730ABCD1234FEDC56787"
         */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_SerialNumber(SafeCamHandle h, IntPtr sn);
-        
+
         /*
             get the camera firmware version, such as: 3.2.1.20140922
         */
@@ -710,7 +710,7 @@ namespace Nn
         */
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_PixelSize(SafeCamHandle h, uint nResolutionIndex, out float x, out float y);
-        
+
         /*
                     ------------------------------------------------------------|
                     | Parameter         |   Range       |   Default             |
@@ -731,7 +731,7 @@ namespace Nn
         private static extern int Nncam_put_VignetMidPointInt(SafeCamHandle h, int nMidPoint);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_VignetMidPointInt(SafeCamHandle h, out int nMidPoint);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_AwbOnePush(SafeCamHandle h, IntPtr fnTTProc, IntPtr pTTCtx);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
@@ -740,13 +740,13 @@ namespace Nn
         private static extern int Nncam_LevelRangeAuto(SafeCamHandle h);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_GetHistogram(SafeCamHandle h, PINNCAM_HISTOGRAM_CALLBACK fnHistogramProc, IntPtr pHistogramCtx);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_AbbOnePush(SafeCamHandle h, IntPtr fnBBProc, IntPtr pBBCtx);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_LEDState(SafeCamHandle h, ushort iLed, ushort iState, ushort iPeriod);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_write_EEPROM(SafeCamHandle h, uint addr, IntPtr pBuffer, uint nBufferLen);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
@@ -758,17 +758,17 @@ namespace Nn
         private static extern int Nncam_read_Pipe(SafeCamHandle h, uint pipeNum, IntPtr pBuffer, uint nBufferLen);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_feed_Pipe(SafeCamHandle h, uint pipeNum);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_write_UART(SafeCamHandle h, IntPtr pBuffer, uint nBufferLen);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_read_UART(SafeCamHandle h, IntPtr pBuffer, uint nBufferLen);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_Option(SafeCamHandle h, eOPTION iOption, int iValue);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_Option(SafeCamHandle h, eOPTION iOption, out int iValue);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_Linear(SafeCamHandle h, byte[] v8, ushort[] v16);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
@@ -777,7 +777,7 @@ namespace Nn
         private static extern int Nncam_put_ColorMatrix(SafeCamHandle h, double[] v);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_put_InitWBGain(SafeCamHandle h, ushort[] v);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_get_FrameRate(SafeCamHandle h, out uint nFrame, out uint nTime, out uint nTotalFrame);
 
@@ -793,10 +793,10 @@ namespace Nn
         private static extern int Nncam_DfcExport(SafeCamHandle h, [MarshalAs(UnmanagedType.LPStr)] string filepath);
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_DfcImport(SafeCamHandle h, [MarshalAs(UnmanagedType.LPStr)] string filepath);
-        
+
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern int Nncam_IoControl(SafeCamHandle h, uint index, eIoControType eType, int outVal, out int inVal);
-        
+
         [DllImport("nncam.dll", ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
         private static extern int Nncam_get_AfParam(SafeCamHandle h, out AfParam pAfParam);
 
@@ -805,12 +805,12 @@ namespace Nn
 
         [DllImport("libnncam.so", ExactSpelling = true, CallingConvention = CallingConvention.Cdecl)]
         private static extern void Nncam_deBayerV2(uint nBayer, int nW, int nH, IntPtr input, IntPtr output, byte nBitDepth, byte nBitCount);
-        
+
         static public uint MAKEFOURCC(uint a, uint b, uint c, uint d)
         {
             return ((uint)(byte)(a) | ((uint)(byte)(b) << 8) | ((uint)(byte)(c) << 16) | ((uint)(byte)(d) << 24));
         }
-        
+
         private SafeCamHandle                   _handle;
         private GCHandle                        _gchandle;
         private DelegateDataCallbackV3          _dDataCallbackV3;
@@ -825,7 +825,7 @@ namespace Nn
             if (_dEventCallback != null)
                 _dEventCallback(nEvent);
         }
-        
+
         private void DataCallbackV3(IntPtr pData, IntPtr pInfo, bool bSnap)
         {
             if (pData == IntPtr.Zero || pInfo == IntPtr.Zero) /* pData == 0 means that something error, we callback to tell the application */
@@ -864,7 +864,7 @@ namespace Nn
                     pthis.DataCallbackV3(pData, pInfo, bSnap);
             }
         }
-        
+
         private static void EventCallback(eEVENT nEvent, IntPtr pCallbackCtx)
         {
             GCHandle gch = GCHandle.FromIntPtr(pCallbackCtx);
@@ -875,7 +875,7 @@ namespace Nn
                     pthis.EventCallback(nEvent);
             }
         }
-        
+
         private static void HistogramCallback(IntPtr aHistY, IntPtr aHistR, IntPtr aHistG, IntPtr aHistB, IntPtr pCallbackCtx)
         {
             GCHandle gch = GCHandle.FromIntPtr(pCallbackCtx);
@@ -929,7 +929,7 @@ namespace Nn
             _handle = h;
             _gchandle = GCHandle.Alloc(this);
         }
-        
+
         public void Dispose()  // Follow the Dispose pattern - public nonvirtual.
         {
             Dispose(true);
@@ -942,13 +942,13 @@ namespace Nn
         {
             Dispose();
         }
-        
+
         /* get the version of lib.so, which is: 37.14643.2019.0511 */
         public static string Version()
         {
             return Marshal.PtrToStringUni(Nncam_Version());
         }
-        
+
         /* enumerate NnCam cameras that are currently connected to computer */
         public static InstanceV2[] EnumV2()
         {
@@ -1008,7 +1008,7 @@ namespace Nn
             Marshal.FreeHGlobal(ti);
             return arr;
         }
-        
+
         [Obsolete("Use EnumV2")]
         public static Instance[] Enum()
         {
@@ -1057,7 +1057,7 @@ namespace Nn
             Marshal.FreeHGlobal(ti);
             return arr;
         }
-        
+
         /*
             the object of NnCam must be obtained by static mothod Open or OpenByIndex, it cannot be obtained by obj = new Nn.NnCam (The constructor is private on purpose)
         */
@@ -1069,7 +1069,7 @@ namespace Nn
                 return null;
             return new NnCam(tmphandle);
         }
-        
+
         /*
             the object of NnCam must be obtained by static mothod Open or OpenByIndex, it cannot be obtained by obj = new Nn.NnCam (The constructor is private on purpose)
         */
@@ -1086,7 +1086,7 @@ namespace Nn
                 return null;
             return new NnCam(tmphandle);
         }
-        
+
         public SafeCamHandle Handle
         {
             get
@@ -1146,7 +1146,7 @@ namespace Nn
                 return Nncam_get_MaxBitDepth(_handle);
             }
         }
-      
+
         /* get the maximum fan speed, the fan speed range = [0, max], closed interval */
         public uint FanMaxSpeed
         {
@@ -1157,7 +1157,7 @@ namespace Nn
                 return Nncam_get_FanMaxSpeed(_handle);
             }
         }
-        
+
         /* get the revision */
         public ushort Revision
         {
@@ -1166,12 +1166,12 @@ namespace Nn
                 ushort rev = 0;
                 if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                     return rev;
-            
+
                 Nncam_get_Revision(_handle, out rev);
                 return rev;
             }
         }
-        
+
         /* get the serial number which is always 32 chars which is zero-terminated such as "TP110826145730ABCD1234FEDC56787" */
         public string SerialNumber
         {
@@ -1203,7 +1203,7 @@ namespace Nn
                 return str;
             }
         }
-        
+
         /* get the camera hardware version, such as: 3.2.1.20140922 */
         public string HwVersion
         {
@@ -1219,7 +1219,7 @@ namespace Nn
                 return str;
             }
         }
-        
+
         /* such as: 20150327 */
         public string ProductionDate
         {
@@ -1270,7 +1270,7 @@ namespace Nn
             return (Nncam_StartPullModeWithWndMsg(_handle, hWnd, nMsg) >= 0);
         }
 #endif
-        
+
         public bool StartPullModeWithCallback(DelegateEventCallback edelegate)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1287,7 +1287,7 @@ namespace Nn
                 return (Nncam_StartPullModeWithCallback(_handle, null, IntPtr.Zero) >= 0);
             }
         }
-        
+
         /*  bits: 24 (RGB24), 32 (RGB32), 8 (Gray) or 16 (Gray) */
         public bool PullImage(IntPtr pImageData, int bits, out uint pnWidth, out uint pnHeight)
         {
@@ -1299,7 +1299,7 @@ namespace Nn
 
             return (Nncam_PullImage(_handle, pImageData, bits, out pnWidth, out pnHeight) >= 0);
         }
-        
+
         public bool PullImageV2(IntPtr pImageData, int bits, out FrameInfoV2 pInfo)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1311,7 +1311,7 @@ namespace Nn
 
             return (Nncam_PullImageV2(_handle, pImageData, bits, out pInfo) >= 0);
         }
-        
+
         /*  bits: 24 (RGB24), 32 (RGB32), 8 (Gray) or 16 (Gray) */
         public bool PullStillImage(IntPtr pImageData, int bits, out uint pnWidth, out uint pnHeight)
         {
@@ -1323,7 +1323,7 @@ namespace Nn
 
             return (Nncam_PullStillImage(_handle, pImageData, bits, out pnWidth, out pnHeight) >= 0);
         }
-        
+
         public bool PullStillImageV2(IntPtr pImageData, int bits, out FrameInfoV2 pInfo)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1335,7 +1335,7 @@ namespace Nn
 
             return (Nncam_PullStillImageV2(_handle, pImageData, bits, out pInfo) >= 0);
         }
-        
+
         /*  bits: 24 (RGB24), 32 (RGB32), 8 (Gray) or 16 (Gray)
             rowPitch: The distance from one row to the next row. rowPitch = 0 means using the default row pitch
         */
@@ -1349,7 +1349,7 @@ namespace Nn
 
             return (Nncam_PullImageWithRowPitch(_handle, pImageData, bits, rowPitch, out pnWidth, out pnHeight) >= 0);
         }
-        
+
         public bool PullImageWithRowPitchV2(IntPtr pImageData, int bits, int rowPitch, out FrameInfoV2 pInfo)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1361,7 +1361,7 @@ namespace Nn
 
             return (Nncam_PullImageWithRowPitchV2(_handle, pImageData, bits, rowPitch, out pInfo) >= 0);
         }
-        
+
         /*  bits: 24 (RGB24), 32 (RGB32), 8 (Gray) or 16 (Gray)
             rowPitch: The distance from one row to the next row. rowPitch = 0 means using the default row pitch
         */
@@ -1375,7 +1375,7 @@ namespace Nn
 
             return (Nncam_PullStillImageWithRowPitch(_handle, pImageData, bits, rowPitch, out pnWidth, out pnHeight) >= 0);
         }
-        
+
         public bool PullStillImageWithRowPitchV2(IntPtr pImageData, int bits, int rowPitch, out FrameInfoV2 pInfo)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1387,7 +1387,7 @@ namespace Nn
 
             return (Nncam_PullStillImageWithRowPitchV2(_handle, pImageData, bits, rowPitch, out pInfo) >= 0);
         }
-        
+
         public bool StartPushModeV3(DelegateDataCallbackV3 ddelegate, DelegateEventCallback edelegate)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1396,7 +1396,7 @@ namespace Nn
             _dDataCallbackV3 = ddelegate;
             _dEventCallback = edelegate;
             _pDataCallbackV3 = new PNNCAM_DATA_CALLBACK_V3(DataCallbackV3);
-            _pEventCallback = new  PNNCAM_EVENT_CALLBACK(EventCallback);
+            _pEventCallback = new PNNCAM_EVENT_CALLBACK(EventCallback);
             return (Nncam_StartPushModeV3(_handle, _pDataCallbackV3, GCHandle.ToIntPtr(_gchandle), _pEventCallback, GCHandle.ToIntPtr(_gchandle)) >= 0);
         }
 
@@ -1428,13 +1428,13 @@ namespace Nn
                 return false;
             return (Nncam_SnapN(_handle, nResolutionIndex, nNumber) >= 0);
         }
-        
+
         /*
             soft trigger:
             nNumber:    0xffff:     trigger continuously
                         0:          cancel trigger
                         others:     number of images to be triggered
-        */        
+        */
         public bool Trigger(ushort nNumber)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1499,7 +1499,7 @@ namespace Nn
                 return false;
             return (Nncam_get_PixelSize(_handle, nResolutionIndex, out x, out y) >= 0);
         }
-        
+
         /*
             numerator/denominator, such as: 1/1, 1/2, 1/3
         */
@@ -1510,7 +1510,7 @@ namespace Nn
                 return false;
             return (Nncam_get_ResolutionRatio(_handle, nResolutionIndex, out pNumerator, out pDenominator) >= 0);
         }
-        
+
         public bool get_RawFormat(out uint nFourCC, out uint bitdepth)
         {
             nFourCC = bitdepth = 0;
@@ -1518,7 +1518,7 @@ namespace Nn
                 return false;
             return (Nncam_get_RawFormat(_handle, out nFourCC, out bitdepth) >= 0);
         }
-        
+
         public bool put_ProcessMode(ePROCESSMODE nProcessMode)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -1613,14 +1613,14 @@ namespace Nn
                 return false;
             return (Nncam_get_MaxAutoExpoTimeAGain(_handle, out maxTime, out maxAGain) >= 0);
         }
-        
+
         public bool put_MinAutoExpoTimeAGain(uint minTime, ushort minAGain)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return false;
             return (Nncam_put_MinAutoExpoTimeAGain(_handle, minTime, minAGain) >= 0);
         }
-        
+
         public bool get_MinAutoExpoTimeAGain(out uint minTime, out ushort minAGain)
         {
             minTime = 0;
@@ -1629,7 +1629,7 @@ namespace Nn
                 return false;
             return (Nncam_get_MinAutoExpoTimeAGain(_handle, out minTime, out minAGain) >= 0);
         }
-        
+
         public bool get_ExpoTime(out uint Time)/* in microseconds */
         {
             Time = 0;
@@ -1831,7 +1831,7 @@ namespace Nn
                 return false;
             return (Nncam_put_HFlip(_handle, bHFlip ? 1 : 0) >= 0);
         }
-        
+
         /* negative film */
         public bool get_Negative(out bool bNegative)
         {
@@ -1853,7 +1853,7 @@ namespace Nn
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return false;
             return (Nncam_put_Negative(_handle, bNegative ? 1 : 0) >= 0);
-        }        
+        }
 
         public bool put_Speed(ushort nSpeed)
         {
@@ -1870,7 +1870,7 @@ namespace Nn
             return (Nncam_get_Speed(_handle, out pSpeed) >= 0);
         }
 
-        /* power supply: 
+        /* power supply:
                 0 -> 60HZ AC
                 1 -> 50Hz AC
                 2 -> DC
@@ -1947,7 +1947,7 @@ namespace Nn
                 return false;
             return (Nncam_get_WhiteBalanceGain(_handle, aGain) >= 0);
         }
-        
+
         public bool put_AWBAuxRect(int X, int Y, int Width, int Height)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2025,7 +2025,7 @@ namespace Nn
                 return false;
             return (Nncam_get_BlackBalance(_handle, aSub) >= 0);
         }
-        
+
         public bool put_ABBAuxRect(int X, int Y, int Width, int Height)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2055,7 +2055,7 @@ namespace Nn
             Height = rc.bottom - rc.top;
             return true;
         }
-        
+
         public bool get_StillResolution(uint nResolutionIndex, out int pWidth, out int pHeight)
         {
             pWidth = pHeight = 0;
@@ -2114,7 +2114,7 @@ namespace Nn
                 return false;
             return (Nncam_get_VignetMidPointInt(_handle, out nMidPoint) >= 0);
         }
-        
+
         /* led state:
             iLed: Led index, (0, 1, 2, ...)
             iState: 1 -> Ever bright; 2 -> Flashing; other -> Off
@@ -2126,14 +2126,14 @@ namespace Nn
                 return false;
             return (Nncam_put_LEDState(_handle, iLed, iState, iPeriod) >= 0);
         }
-        
+
         public int write_EEPROM(uint addr, IntPtr pBuffer, uint nBufferLen)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return 0;
             return Nncam_write_EEPROM(_handle, addr, pBuffer, nBufferLen);
         }
-        
+
         public int read_EEPROM(uint addr, IntPtr pBuffer, uint nBufferLen)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2147,35 +2147,35 @@ namespace Nn
                 return 0;
             return Nncam_write_Pipe(_handle, pipeNum, pBuffer, nBufferLen);
         }
-        
+
         public int read_Pipe(uint pipeNum, IntPtr pBuffer, uint nBufferLen)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return 0;
             return Nncam_read_Pipe(_handle, pipeNum, pBuffer, nBufferLen);
         }
-        
+
         public int feed_Pipe(uint pipeNum)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return 0;
             return Nncam_feed_Pipe(_handle, pipeNum);
         }
-        
+
         public int write_UART(IntPtr pBuffer, uint nBufferLen)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return 0;
             return Nncam_write_UART(_handle, pBuffer, nBufferLen);
         }
-        
+
         public int read_UART(IntPtr pBuffer, uint nBufferLen)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return 0;
             return Nncam_read_UART(_handle, pBuffer, nBufferLen);
         }
-        
+
         public bool put_Option(eOPTION iOption, int iValue)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2190,21 +2190,21 @@ namespace Nn
                 return false;
             return (Nncam_get_Option(_handle, iOption, out iValue) >= 0);
         }
-        
+
         public bool put_Linear(byte[] v8, ushort[] v16)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return false;
             return (Nncam_put_Linear(_handle, v8, v16) >= 0);
         }
-        
+
         public bool put_Curve(byte[] v8, ushort[] v16)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
                 return false;
             return (Nncam_put_Curve(_handle, v8, v16) >= 0);
         }
-        
+
         public bool put_ColorMatrix(double[] v)
         {
             if (v.Length != 9)
@@ -2213,7 +2213,7 @@ namespace Nn
                 return false;
             return (Nncam_put_ColorMatrix(_handle, v) >= 0);
         }
-        
+
         public bool put_InitWBGain(ushort[] v)
         {
             if (v.Length != 3)
@@ -2222,7 +2222,7 @@ namespace Nn
                 return false;
             return (Nncam_put_InitWBGain(_handle, v) >= 0);
         }
-        
+
         /* get the temperature of the sensor, in 0.1 degrees Celsius (32 means 3.2 degrees Celsius, -35 means -3.5 degree Celsius) */
         public bool get_Temperature(out short pTemperature)
         {
@@ -2231,7 +2231,7 @@ namespace Nn
                 return false;
             return (Nncam_get_Temperature(_handle, out pTemperature) == 0);
         }
-        
+
         /* set the target temperature of the sensor or TEC, in 0.1 degrees Celsius (32 means 3.2 degrees Celsius, -35 means -3.5 degree Celsius) */
         public bool put_Temperature(short nTemperature)
         {
@@ -2239,7 +2239,7 @@ namespace Nn
                 return false;
             return (Nncam_put_Temperature(_handle, nTemperature) == 0);
         }
-        
+
         public bool put_Roi(uint xOffset, uint yOffset, uint xWidth, uint yHeight)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2254,7 +2254,7 @@ namespace Nn
                 return false;
             return (Nncam_get_Roi(_handle, out pxOffset, out pyOffset, out pxWidth, out pyHeight) >= 0);
         }
-        
+
         /*
             get the frame rate: framerate (fps) = Frame * 1000.0 / nTime
         */
@@ -2265,7 +2265,7 @@ namespace Nn
                 return false;
             return (Nncam_get_FrameRate(_handle, out nFrame, out nTime, out nTotalFrame) >= 0);
         }
-        
+
         public bool LevelRangeAuto()
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2290,7 +2290,7 @@ namespace Nn
 
             return (Nncam_AwbOnePush(_handle, IntPtr.Zero, IntPtr.Zero) >= 0);
         }
-        
+
         public bool AbbOnePush()
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2298,7 +2298,7 @@ namespace Nn
 
             return (Nncam_AbbOnePush(_handle, IntPtr.Zero, IntPtr.Zero) >= 0);
         }
-        
+
         public bool FfcOnePush()
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2314,7 +2314,7 @@ namespace Nn
 
             return (Nncam_DfcOnePush(_handle) >= 0);
         }
-        
+
         public bool FfcExport(string filepath)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2330,7 +2330,7 @@ namespace Nn
 
             return (Nncam_FfcImport(_handle, filepath) >= 0);
         }
-        
+
         public bool DfcExport(string filepath)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2346,7 +2346,7 @@ namespace Nn
 
             return (Nncam_DfcImport(_handle, filepath) >= 0);
         }
-        
+
         public bool IoControl(uint index, eIoControType eType, int outVal, out int inVal)
         {
             inVal = 0;
@@ -2355,7 +2355,7 @@ namespace Nn
 
             return (Nncam_IoControl(_handle, index, eType, outVal, out inVal) >= 0);
         }
-        
+
         public bool get_AfParam(out AfParam pAfParam)
         {
             pAfParam.idef = pAfParam.imax = pAfParam.imin = pAfParam.imaxabs = pAfParam.iminabs = pAfParam.zoneh = pAfParam.zonev = 0;
@@ -2364,7 +2364,7 @@ namespace Nn
 
             return (Nncam_get_AfParam(_handle, out pAfParam) >= 0);
         }
-        
+
         public bool GetHistogram(DelegateHistogramCallback fnHistogramProc)
         {
             if (_handle == null || _handle.IsInvalid || _handle.IsClosed)
@@ -2374,7 +2374,7 @@ namespace Nn
             _pHistogramCallback = new PINNCAM_HISTOGRAM_CALLBACK(HistogramCallback);
             return (Nncam_GetHistogram(_handle, _pHistogramCallback, GCHandle.ToIntPtr(_gchandle)) >= 0);
         }
-        
+
         /*
             calculate the clarity factor:
             pImageData: pointer to the image data
@@ -2385,7 +2385,7 @@ namespace Nn
         {
             return Nncam_calc_ClarityFactor(pImageData, bits, nImgWidth, nImgHeight);
         }
-        
+
         /*
             nBitCount: output bitmap bit count
             when nBitDepth == 8:
