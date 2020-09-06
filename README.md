@@ -1,4 +1,7 @@
-# nncam
+# Replaced by bestscope_E3ISPM20000KPA_camera
+
+To be deleted.
+
 Bestscope Camera
 
 
